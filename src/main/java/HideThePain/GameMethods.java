@@ -2,7 +2,9 @@ package HideThePain;
 
 import HideThePain.People.Dealer;
 import HideThePain.People.Player;
+import javafx.scene.image.ImageView;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -10,11 +12,14 @@ import java.util.Scanner;
 public class GameMethods {
     private static boolean hasTalon=false;
 
-    public static void giveCardToPlayer(Player P, List<Card> deck){
+    public static void giveCardToPlayer(Player P, List<Card> deck) throws FileNotFoundException {
         Card card=deck.get(0);
+        card.setTexture(UI_Handler.CardTextureAssigner(card, P.getHoldingCards().size()));
         P.addCard(card);
         deck.remove(0);
 
+
+        //Talon Checker
         if(P.getHoldingCards().get(P.getHoldingCards().size()-1).getValue()==0){
             hasTalon=true;
             Card card1=deck.get(0);
@@ -22,11 +27,15 @@ public class GameMethods {
             deck.remove(0);
         }
     }
-    public static void giveCardToDealer(Dealer D, List<Card> deck){
+    public static void giveCardToDealer(Dealer D, List<Card> deck) throws FileNotFoundException {
         Card card=deck.get(0);
+        card.setTexture(UI_Handler.CardTextureAssigner(card, D.getHoldingCards().size()));
         D.addCard(card);
         deck.remove(0);
 
+
+
+        //Talon Checker
         if(D.getHoldingCards().get(D.getHoldingCards().size()-1).getValue()==0){
             hasTalon=true;
             Card card1=deck.get(0);
@@ -34,8 +43,9 @@ public class GameMethods {
             deck.remove(0);
         }
     }
-    public static void Hit(Player P, List<Card> deck){
+    public static void Hit(Player P, List<Card> deck) throws FileNotFoundException {
         Card card=deck.get(0);
+        card.setTexture(UI_Handler.CardTextureAssigner(card, P.getHoldingCards().size()));
         P.addCard(card);
         deck.remove(0);
     }
@@ -50,7 +60,7 @@ public class GameMethods {
 
     //implement Split
 
-    public static Player Split(Player P, List<Card> deck){
+    public static Player Split(Player P, List<Card> deck) throws FileNotFoundException {
         boolean hasTalon=false;
         List<Card> cards=P.getHoldingCards();
 
@@ -74,7 +84,7 @@ public class GameMethods {
         return null;
     }
 
-    public static void DoubleDown(Player P, List<Card> deck){
+    public static void DoubleDown(Player P, List<Card> deck) throws FileNotFoundException {
         P.removeBalance(P.getStake());
         P.setStake(P.getStake()*2);
         giveCardToPlayer(P,deck);
@@ -222,7 +232,7 @@ public class GameMethods {
             System.out.println("Please enter 'Yes' or 'No'!");
         }while (true);
     }
-
+}
 
 
 
@@ -332,4 +342,4 @@ public class GameMethods {
 
 
 
-}
+

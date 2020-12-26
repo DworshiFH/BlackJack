@@ -1,35 +1,26 @@
 package HideThePain;
 
 
+import javafx.scene.image.ImageView;
+
 public class Card {
 
     private String ID;
     private int value;
-    private int texPosX;
-    private int texPosY;
+    private ImageView texture;
 
     public Card(String ID, int value){
         this.ID = ID;
         this.value = value;
-        this.texPosX=50;
-        this.texPosY=50;
+        this.texture=null;
     }
 
-
-    public int getTexPosX() {
-        return texPosX;
+    public ImageView getTexture() {
+        return texture;
     }
 
-    public void setTexPosX(int texPosX) {
-        this.texPosX = texPosX;
-    }
-
-    public int getTexPosY() {
-        return texPosY;
-    }
-
-    public void setTexPosY(int texPosY) {
-        this.texPosY = texPosY;
+    public void setTexture(ImageView texture) {
+        this.texture = texture;
     }
 
     public int getValue(){

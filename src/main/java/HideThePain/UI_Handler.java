@@ -11,13 +11,17 @@ import java.io.FileNotFoundException;
 
 public class UI_Handler {
 
-    public ImageView CardTextureAssigner(Card card, int x) throws FileNotFoundException {
+    private static final int offset = 50;
+
+    //just handles Card Textures
+    public static ImageView CardTextureAssigner(Card card, int cardnum) throws FileNotFoundException {
         ImageView imageView = new ImageView();
         try{
             Image image = new Image(new FileInputStream("@../../../../rsc/textures/cards/"+card.getID()+".jpg"));
             imageView.setImage(image);
             imageView.setFitHeight(78);
             imageView.setFitWidth(51);
+            imageView.setLayoutX(50+offset*cardnum);
         }catch (FileNotFoundException e){
             e.printStackTrace();
             //use Logger for future builds
