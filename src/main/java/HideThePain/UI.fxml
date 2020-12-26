@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="667.0" prefWidth="926.0" style="-fx-background-color: green;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <BorderPane layoutX="25.0" layoutY="61.0" prefHeight="200.0" prefWidth="749.0" style="-fx-border-color: white;" />
+      <Button layoutX="7.0" layoutY="8.0" mnemonicParsing="false" text="Quit" />
+      <Button layoutX="830.0" layoutY="326.0" mnemonicParsing="false" text="Hit" />
+      <Button fx:id="splitButton" layoutX="869.0" layoutY="325.0" mnemonicParsing="false" onAction="#Split" text="Split" />
+      <Button layoutX="836.0" layoutY="10.0" mnemonicParsing="false" text="Stand" visible="false" />
+      <Button layoutX="811.0" layoutY="357.0" mnemonicParsing="false" text="Double Down" />
+      <Button layoutX="772.0" layoutY="326.0" mnemonicParsing="false" text="Stand" />
+      <Pane layoutX="27.0" layoutY="396.0" prefHeight="247.0" prefWidth="865.0" style="-fx-border-color: white;" />
+      <TextField layoutX="25.0" layoutY="304.0" promptText="Set Your Stakes" />
+      <TextArea layoutX="205.0" layoutY="296.0" prefHeight="37.0" prefWidth="170.0" />
+   </children>
+</Pane>
