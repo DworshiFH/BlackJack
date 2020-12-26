@@ -25,6 +25,10 @@ public class Player {
     }
 
     public void setStake(double stake) {
+        if(stake < 0) {
+            stake *= -1;
+        }
+        this.balance -= stake;
         this.stake = stake;
     }
 
