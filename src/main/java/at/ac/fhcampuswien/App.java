@@ -7,31 +7,22 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class App extends Application {
-    public static void main(String[] args){
-        launch(args);
-    }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("UI.fxml"));
+    public void start(Stage stage) throws Exception {
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("UI.fxml")); // only looks into /resources folder for files!
         Parent root = loader.load();
-        primaryStage.setScene(new Scene(root));
+        UI_Controller ctrl = loader.getController();  // get the controller instance of UI.fxml which is of type NotesController
 
-        primaryStage.show();
+        stage.setOnCloseRequest(e -> {
+            e.consume();
+            ctrl.exit();
+            //loader.<NotesController>getController().exit(); // bug - controller is null - seems to be deprecated code
+        });
 
-
-
-
-        /*//Parent ui = FXMLLoader.load(getClass().getResource("UI_backup.fxml"));
-        primaryStage.setTitle("Black Jack");
-        Pane ui = new StackPane();
-        Scene scene = new Scene(ui, 800,600);
-
-        primaryStage.setScene(scene);
-        primaryStage.setResizable(false);
-        primaryStage.show();*/
-
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
     }
 }
 

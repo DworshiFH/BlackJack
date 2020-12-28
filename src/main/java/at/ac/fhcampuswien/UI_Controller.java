@@ -1,16 +1,25 @@
 package at.ac.fhcampuswien;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 
 public class UI_Controller {
 
     @FXML
-    private TextArea textTest;
+    private TextArea textArea;
 
     public void initialize(){
-        textTest.setText("Test");
+        load();
+
+        textArea.setText("Test");
     }
 
+    private void load() {
 
+    }
+
+    public void exit() {
+        Platform.exit();
+    }
 }
