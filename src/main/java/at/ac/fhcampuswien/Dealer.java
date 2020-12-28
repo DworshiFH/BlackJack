@@ -1,6 +1,4 @@
-package HideThePain.People;
-
-import HideThePain.Card;
+package at.ac.fhcampuswien;
 
 import java.util.ArrayList;
 import java.util.List;

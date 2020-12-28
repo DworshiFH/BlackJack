@@ -1,11 +1,8 @@
-package HideThePain;
+package at.ac.fhcampuswien;
 
-import HideThePain.People.Dealer;
-import HideThePain.People.Player;
-import javafx.scene.image.ImageView;
+
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -14,7 +11,7 @@ public class GameMethods {
 
     public static void giveCardToPlayer(Player P, List<Card> deck) throws FileNotFoundException {
         Card card=deck.get(0);
-        card.setTexture(UI_Handler.CardTextureAssigner(card, P.getHoldingCards().size()));
+        card.setTexture(UI_Methods.CardTextureAssigner(card, P.getHoldingCards().size()));
         P.addCard(card);
         deck.remove(0);
 
@@ -29,7 +26,7 @@ public class GameMethods {
     }
     public static void giveCardToDealer(Dealer D, List<Card> deck) throws FileNotFoundException {
         Card card=deck.get(0);
-        card.setTexture(UI_Handler.CardTextureAssigner(card, D.getHoldingCards().size()));
+        card.setTexture(UI_Methods.CardTextureAssigner(card, D.getHoldingCards().size()));
         D.addCard(card);
         deck.remove(0);
 
@@ -45,7 +42,7 @@ public class GameMethods {
     }
     public static void Hit(Player P, List<Card> deck) throws FileNotFoundException {
         Card card=deck.get(0);
-        card.setTexture(UI_Handler.CardTextureAssigner(card, P.getHoldingCards().size()));
+        card.setTexture(UI_Methods.CardTextureAssigner(card, P.getHoldingCards().size()));
         P.addCard(card);
         deck.remove(0);
     }

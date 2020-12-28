@@ -1,7 +1,6 @@
-package HideThePain.People;
+package at.ac.fhcampuswien;
 
 
-import HideThePain.Card;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +30,6 @@ public class Player {
         this.balance -= stake;
         this.stake = stake;
     }
-
     public void addCard(Card card) {
         this.holdingCards.add(card);
     }

@@ -1,4 +1,4 @@
-package HideThePain;
+package at.ac.fhcampuswien;
 
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
@@ -9,7 +9,7 @@ import java.awt.event.ActionEvent;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-public class UI_Handler {
+public class UI_Methods {
 
     private static final int offset = 50;
 

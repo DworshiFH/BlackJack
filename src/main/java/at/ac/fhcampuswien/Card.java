@@ -1,4 +1,4 @@
-package HideThePain;
+package at.ac.fhcampuswien;
 
 
 import javafx.scene.image.ImageView;
