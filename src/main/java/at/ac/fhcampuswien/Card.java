@@ -1,6 +1,7 @@
 package at.ac.fhcampuswien;
 
 
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class Card {
@@ -29,5 +30,9 @@ public class Card {
 
     public String getID() {
         return ID;
+    }
+
+    public void setImage(Image image) {
+        this.texture.setImage(image);
     }
 }

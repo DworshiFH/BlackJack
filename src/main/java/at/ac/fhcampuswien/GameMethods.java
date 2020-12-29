@@ -11,7 +11,7 @@ public class GameMethods {
 
     public static void giveCardToPlayer(Player P, List<Card> deck) throws FileNotFoundException {
         Card card=deck.get(0);
-        card.setTexture(UI_Methods.CardTextureAssigner(card, P.getHoldingCards().size()));
+        card.setTexture(AppController.CardTextureAssigner(card, P.getHoldingCards().size(),false));
         P.addCard(card);
         deck.remove(0);
 
@@ -26,7 +26,7 @@ public class GameMethods {
     }
     public static void giveCardToDealer(Dealer D, List<Card> deck) throws FileNotFoundException {
         Card card=deck.get(0);
-        card.setTexture(UI_Methods.CardTextureAssigner(card, D.getHoldingCards().size()));
+        card.setTexture(AppController.CardTextureAssigner(card, D.getHoldingCards().size(),true));
         D.addCard(card);
         deck.remove(0);
 
@@ -42,15 +42,12 @@ public class GameMethods {
     }
     public static void Hit(Player P, List<Card> deck) throws FileNotFoundException {
         Card card=deck.get(0);
-        card.setTexture(UI_Methods.CardTextureAssigner(card, P.getHoldingCards().size()));
+        card.setTexture(AppController.CardTextureAssigner(card, P.getHoldingCards().size(),false));
         P.addCard(card);
         deck.remove(0);
     }
 
-    public static void setStake(Player P){
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Please set your Stake: ");
-        int amount = scanner.nextInt();
+    public static void setStake(Player P, int amount){
         P.setStake(amount);
         P.removeBalance(amount);
     }
@@ -196,6 +193,9 @@ public class GameMethods {
             }
         }else{
             ret=false;
+        }
+        if(PcardValue>21){
+            ret=true;
         }
         return ret;
     }

@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien;
 
+import at.ac.fhcampuswien.alteVersionen.UI_Controller;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -12,7 +13,7 @@ public class App extends Application {
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("UI.fxml")); // only looks into /resources folder for files!
         Parent root = loader.load();
-        UI_Controller ctrl = loader.getController();  // get the controller instance of UI.fxml which is of type NotesController
+        AppController ctrl = loader.getController();  // get the controller instance of UI.fxml which is of type NotesController
 
         stage.setOnCloseRequest(e -> {
             e.consume();
