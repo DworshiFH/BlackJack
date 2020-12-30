@@ -27,7 +27,6 @@ public class Player {
         if(stake < 0) {
             stake *= -1;
         }
-        this.balance -= stake;
         this.stake = stake;
     }
     public void addCard(Card card) {

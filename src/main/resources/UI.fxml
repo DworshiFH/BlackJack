@@ -5,18 +5,17 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="667.0" prefWidth="926.0" style="-fx-background-color: green;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.fhcampuswien.AppController">
    <children>
-      <Button layoutX="7.0" layoutY="8.0" mnemonicParsing="false" text="Quit" />
-      <Button fx:id="hitButton" layoutX="830.0" layoutY="326.0" mnemonicParsing="false" onAction="#hit" text="Hit" />
-      <Button fx:id="splitButton" layoutX="869.0" layoutY="325.0" mnemonicParsing="false" text="Split" />
-      <Button layoutX="836.0" layoutY="10.0" mnemonicParsing="false" text="Stand" visible="false" />
-      <Button layoutX="811.0" layoutY="357.0" mnemonicParsing="false" text="Double Down" />
-      <Button layoutX="772.0" layoutY="326.0" mnemonicParsing="false" text="Stand" />
+      <Button fx:id="hitButton" disable="true" layoutX="830.0" layoutY="326.0" mnemonicParsing="false" onAction="#hit" text="Hit" />
+      <Button fx:id="splitButton" disable="true" layoutX="869.0" layoutY="325.0" mnemonicParsing="false" onAction="#Split" text="Split" />
+      <Button fx:id="doubleDownButton" disable="true" layoutX="811.0" layoutY="357.0" mnemonicParsing="false" onAction="#DoubleDown" text="Double Down" />
+      <Button fx:id="StandButton" disable="true" layoutX="772.0" layoutY="326.0" mnemonicParsing="false" onAction="#Stand" text="Stand" />
       <Pane fx:id="playerPane" layoutX="27.0" layoutY="396.0" prefHeight="247.0" prefWidth="865.0" style="-fx-border-color: white;" />
       <TextField fx:id="stakesFiled" layoutX="27.0" layoutY="321.0" promptText="Set Your Stakes" />
-      <TextArea fx:id="terminal" layoutX="273.0" layoutY="304.0" prefHeight="85.0" prefWidth="190.0" />
+      <TextArea fx:id="terminal" editable="false" layoutX="273.0" layoutY="304.0" prefHeight="85.0" prefWidth="190.0" />
       <Pane fx:id="dealerPane" layoutX="27.0" layoutY="35.0" prefHeight="260.0" prefWidth="865.0" style="-fx-border-color: white;" />
-      <TextArea fx:id="showDealerValue" layoutX="725.0" layoutY="44.0" prefHeight="38.0" prefWidth="156.0" text="Card Value: " />
-      <TextArea fx:id="showPlayerValue" layoutX="727.0" layoutY="406.0" prefHeight="38.0" prefWidth="156.0" text="Card Value: " />
+      <TextArea fx:id="showDealerValue" editable="false" layoutX="725.0" layoutY="44.0" prefHeight="38.0" prefWidth="156.0" text="Card Value: " />
+      <TextArea fx:id="showPlayerValue" editable="false" layoutX="727.0" layoutY="406.0" prefHeight="38.0" prefWidth="156.0" text="Card Value: " />
       <Button fx:id="setStakeButton" layoutX="176.0" layoutY="321.0" mnemonicParsing="false" onAction="#stake" text="Set Stake" />
+      <TextField fx:id="showBalance" editable="false" layoutX="27.0" layoutY="357.0" />
    </children>
 </Pane>

@@ -31,7 +31,6 @@ public class GameMethods {
         deck.remove(0);
 
 
-
         //Talon Checker
         if(D.getHoldingCards().get(D.getHoldingCards().size()-1).getValue()==0){
             hasTalon=true;
@@ -60,14 +59,17 @@ public class GameMethods {
 
         if(cards.size()==2){
 
-            if(cards.get(0)==cards.get(1)){
-                Player ret=new Player(P.getPlayerName()+"2", P.getStake());
+            if(cards.get(0).getValue()==cards.get(1).getValue()){
+                Player ret=new Player(P.getPlayerName()+" Split", P.getStake());
                 ret.setStake(P.getStake());
 
                 List <Card> temp=P.getHoldingCards();
 
                 ret.addCard(temp.get(0));
                 temp.remove(0);
+
+                P.clearHoldingCards();
+                giveCardToPlayer(P,temp);
 
                 giveCardToPlayer(P, deck);
                 giveCardToPlayer(ret, deck);

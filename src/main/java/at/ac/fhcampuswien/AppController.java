@@ -32,6 +32,12 @@ public class AppController {
     @FXML
     public Button splitButton;
     @FXML
+    public Button doubleDownButton;
+    @FXML
+    public Button StandButton;
+    @FXML
+    public TextField showBalance;
+    @FXML
     private Pane mainPane;
     @FXML
     private TextArea terminal;
@@ -46,6 +52,10 @@ public class AppController {
     boolean push;
     boolean talonFound;
     boolean win;
+    Player splitPlayer1;
+    boolean showFullDealerValue;
+
+    boolean isFirstStake;
 
     private static int numOfCardsDealer=0;
     double oldStake = 0;
@@ -71,14 +81,18 @@ public class AppController {
 
         }while(dealerCardValue<17);*/
 
-
-
         //terminal.setText("Test");
     }
     public void newRound() throws FileNotFoundException, InterruptedException {
+        clearPlayingField();
+        player1.clearHoldingCards();
+        dealer.clearHoldingCards();
+
+        showBalance.setText("Your Balance: "+player1.getBalance());
 
         numOfCardsDealer=0;
         oldStake=0;
+        splitPlayer1=null;
 
         playing=true;
         isBlackJack=false;
@@ -86,6 +100,9 @@ public class AppController {
         talonFound=false;
         win=false;
         lost=false;
+        showFullDealerValue=false;
+
+        isFirstStake=true;
 
         GameMethods.giveCardToDealer(dealer,deck);
         generateCardDealer();
@@ -100,13 +117,25 @@ public class AppController {
         //checks for Blackjack
         if(player1.getCard(0).getValue()==11 && player1.getCard(1).getValue()==10){
             GameMethods.BlackJack(player1, dealer);
-            clearPlayingField();
+            terminal.clear();
+            terminal.setText("BlackJack!");
             newRound();
         }else if(player1.getCard(1).getValue()==11 && player1.getCard(0).getValue()==10) {
             GameMethods.BlackJack(player1, dealer);
-            clearPlayingField();
+            terminal.clear();
+            terminal.setText("BlackJack!");
             newRound();
         }
+
+        hitButton.setDisable(true);
+        splitButton.setDisable(true);
+        doubleDownButton.setDisable(true);
+        StandButton.setDisable(true);
+
+
+        //dealer pulls cards until 17 or more has been reached
+
+
     }
 
     private final String showDealerValueDefault= "Card Value: ";
@@ -125,7 +154,11 @@ public class AppController {
                 }
             }
         }
-        showDealerValue.setText(showDealerValueDefault+ DcardValue);
+        if(showFullDealerValue){
+            showDealerValue.setText(showDealerValueDefault+ DcardValue);
+        }else{
+            showDealerValue.setText(showDealerValueDefault+ dealer.getHoldingCards().get(0).getValue());
+        }
 
         if(dealer.getHoldingCards().size()==3){
             String path=System.getProperty("user.dir")+"/src/main/java/at/ac/fhcampuswien/textures/cards/"+dealer.getHoldingCards().get(1).getID()+".jpg";
@@ -133,6 +166,7 @@ public class AppController {
             dealer.getHoldingCards().get(1).setImage(image);
         }
     }
+
     private final String showPlayerValueDefault= "Card Value: ";
     public void generateCardPlayer(){
         int PcardValue=0;
@@ -152,21 +186,60 @@ public class AppController {
         showPlayerValue.setText(showPlayerValueDefault+ PcardValue);
     }
 
-    public void clearPlayingField() throws InterruptedException {
+    public void DealerDraws() throws FileNotFoundException, InterruptedException {
+        int dealerCardValue=0;
+        showFullDealerValue =true;
+        for(int i=0;i<dealer.getHoldingCards().size();i++){
+            dealerCardValue+=dealer.getHoldingCards().get(i).getValue();
+        }
+        if(dealerCardValue<17){
+            int i=dealer.getHoldingCards().size();
+            do{
+                GameMethods.giveCardToDealer(dealer,deck);
+                generateCardDealer();
+                dealerCardValue+=dealer.getHoldingCards().get(i).getValue();
+                i++;
+            }while(dealerCardValue<17);
+        }
+        win=GameMethods.win(player1,dealer);
+        push=GameMethods.push(player1,dealer);
+        lost=GameMethods.lost(player1,dealer);
+        if(win){
+            terminal.clear();
+            terminal.setText("Won!");
+            GameMethods.winPayout(player1,dealer);
+            newRound();
+        }else if(push){
+            terminal.clear();
+            terminal.setText("Push!");
+            GameMethods.pushPayout(player1,dealer);
+            newRound();
+        }else if(lost){
+            terminal.clear();
+            terminal.setText("Lost!");
+            GameMethods.lostPayout(player1,dealer);
+            newRound();
+        }
+    }
+
+    public void clearPlayingField() {
         playerPane.getChildren().clear();
         dealerPane.getChildren().clear();
     }
 
     public void hit() throws FileNotFoundException, InterruptedException {
+
         GameMethods.Hit(player1,deck);
         generateCardPlayer();
         lost =GameMethods.lost(player1, dealer);
         if(lost){
+            terminal.clear();
             terminal.setText("You have Overdrawn!");
             GameMethods.lostPayout(player1, dealer);
-            clearPlayingField();
             newRound();
         }
+        doubleDownButton.setDisable(true);
+        splitButton.setDisable(true);
     }
 
     public void stake(){
@@ -176,10 +249,58 @@ public class AppController {
         GameMethods.setStake(player1, amount);
         double printAmount=oldStake+amount;
 
+        if(isFirstStake){
+            terminal.clear();
+            terminal.setText(terminal.getText()+"Your Stake: "+printAmount);
+            isFirstStake=false;
+        }else{
+            terminal.setText(terminal.getText()+"\n"+"Your Stake: "+printAmount);
+        }
+        hitButton.setDisable(false);
+        splitButton.setDisable(false);
+        doubleDownButton.setDisable(false);
+        StandButton.setDisable(false);
 
-        //make so that first systemlineseperator isnt shown
-        terminal.setText(terminal.getText()+"\n"+"Your Stake: "+printAmount);
+        showBalance.setText("Your Balance: "+player1.getBalance());
     }
+
+    public void Split() throws FileNotFoundException {
+
+
+    }
+
+    public void DoubleDown() throws FileNotFoundException, InterruptedException {
+        if(player1.getHoldingCards().size()==2){
+            GameMethods.DoubleDown(player1,deck);
+            generateCardPlayer();
+            //rotates the card by 90°
+            player1.getHoldingCards().get(player1.getHoldingCards().size()-1).getTexture().setRotate(90);
+            Stand();
+
+            //dealer draws Cards
+        }
+    }
+
+    public void Stand() throws FileNotFoundException, InterruptedException {
+        hitButton.setDisable(true);
+        splitButton.setDisable(true);
+        doubleDownButton.setDisable(true);
+        StandButton.setDisable(true);
+        //dealer draws Cards
+        showFullDealerValue=true;
+        DealerDraws();
+
+        int DcardValue=0;
+        for(int i=0; i<dealer.getHoldingCards().size();i++) {
+            DcardValue += dealer.getHoldingCards().get(i).getValue();
+        }
+        showDealerValue.setText(showDealerValueDefault+ DcardValue);
+
+        String path=System.getProperty("user.dir")+"/src/main/java/at/ac/fhcampuswien/textures/cards/"+dealer.getHoldingCards().get(1).getID()+".jpg";
+        Image image = new Image(new FileInputStream(path));
+        dealer.getHoldingCards().get(1).setImage(image);
+    }
+
 
     public void exit(){
         Platform.exit();
@@ -216,6 +337,4 @@ public class AppController {
         }
         return imageView;
     }
-
-
 }
