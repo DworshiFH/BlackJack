@@ -7,16 +7,16 @@
       style="-fx-background-color: green;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="at.ac.fhcampuswien.AppController">
     <children>
-        <Button fx:id="hitButton" disable="true" layoutX="830.0" layoutY="326.0" mnemonicParsing="false" onAction="#hit" text="Hit" />
+        <Button fx:id="hitButton" disable="true" layoutX="830.0" layoutY="326.0" mnemonicParsing="false" onAction="#Hit" text="Hit" />
         <Button fx:id="splitButton" disable="true" layoutX="869.0" layoutY="325.0" mnemonicParsing="false" onAction="#Split" text="Split" />
         <Button fx:id="doubleDownButton" disable="true" layoutX="811.0" layoutY="357.0" mnemonicParsing="false" onAction="#DoubleDown" text="Double Down" />
-        <Button fx:id="StandButton" disable="true" layoutX="772.0" layoutY="326.0" mnemonicParsing="false" onAction="#Stand" text="Stand" />
+        <Button fx:id="standButton" disable="true" layoutX="772.0" layoutY="326.0" mnemonicParsing="false" onAction="#Stand" text="Stand" />
         <Pane fx:id="playerPane" layoutX="27.0" layoutY="396.0" prefHeight="247.0" prefWidth="865.0" style="-fx-border-color: white;" />
         <TextField fx:id="stakesFiled" layoutX="27.0" layoutY="314.0" prefHeight="26.0" prefWidth="141.0" promptText="Set Your Stakes" />
         <Pane fx:id="dealerPane" disable="true" layoutX="27.0" layoutY="35.0" prefHeight="260.0" prefWidth="865.0" style="-fx-border-color: white;" />
-        <TextArea fx:id="DealerValueWindow" editable="false" layoutX="725.0" layoutY="44.0" prefHeight="38.0" prefWidth="156.0" text="Card Value: " />
-        <TextArea fx:id="PlayerValueWindow" editable="false" layoutX="727.0" layoutY="406.0" prefHeight="38.0" prefWidth="156.0" text="Card Value: " />
-        <Button fx:id="setStakeButton" layoutX="176.0" layoutY="313.0" mnemonicParsing="false" onAction="#RoundStart" text="Set Stake" />
+        <TextArea fx:id="dealerValueWindow" editable="false" layoutX="725.0" layoutY="44.0" prefHeight="38.0" prefWidth="156.0" text="Card Value: " />
+        <TextArea fx:id="playerValueWindow" editable="false" layoutX="727.0" layoutY="406.0" prefHeight="38.0" prefWidth="156.0" text="Card Value: " />
+        <Button fx:id="setBetButton" layoutX="176.0" layoutY="313.0" mnemonicParsing="false" onAction="#placeBet" text="Set Stake" />
         <TextField fx:id="showBalance" editable="false" layoutX="27.0" layoutY="357.0" prefHeight="26.0" prefWidth="190.0" />
         <Button fx:id="newRoundButton" layoutX="494.0" layoutY="334.0" mnemonicParsing="false" onAction="#newRound" text="New Round" visible="false" />
         <TextArea fx:id="terminal" editable="false" layoutX="270.0" layoutY="309.0" prefHeight="76.0" prefWidth="199.0" />

@@ -60,4 +60,8 @@ public class Player {
     public void removeBalance(double rem){
         this.balance-=rem;
     }
+
+    public void removeCard(int index){
+        this.holdingCards.remove(index);
+    }
 }

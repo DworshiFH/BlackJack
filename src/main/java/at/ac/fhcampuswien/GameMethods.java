@@ -11,113 +11,99 @@ import java.util.List;
 public class GameMethods {
     private static boolean hasTalon=false;
 
-    public static void giveCardToPlayer(Player P, List<Card> deck) {
+    public static void GiveCardToPlayer(Player player, List<Card> deck) {
         Card card=deck.get(0);
         if(card.getID().equals("Talon")){ //Talon Checker
             hasTalon=true;
             deck.remove(0);
             card=deck.get(0);
         }
-        card.setImageView(AppController.CardTextureAssigner(card, P.getHoldingCards().size(),false));
-        P.addCard(card);
+        card.setImageView(AppController.CardTextureAssigner(card, player.getHoldingCards().size(),false));
+        player.addCard(card);
         deck.remove(0);
     }
 
-    public static boolean talonFound(){
+    public static boolean TalonFound(){
         return hasTalon;
     }
-    public static void resetTalon(){
+    public static void ResetTalon(){
         hasTalon=false;
     }
 
-    public static void giveCardToDealer(Dealer D, List<Card> deck) {
+    public static void GiveCardToDealer(Dealer dealer, List<Card> deck) {
         Card card=deck.get(0);
         if(card.getID().equals("Talon")){ //Talon Checker
             hasTalon=true;
             deck.remove(0);
             card=deck.get(0);
         }
-        card.setImageView(AppController.CardTextureAssigner(card, D.getHoldingCards().size(),true));
-        D.addCard(card);
-        deck.remove(0);
-    }
-    public static void Hit(Player P, List<Card> deck) {
-        Card card=deck.get(0);
-        card.setImageView(AppController.CardTextureAssigner(card, P.getHoldingCards().size(),false));
-        P.addCard(card);
+        card.setImageView(AppController.CardTextureAssigner(card, dealer.getHoldingCards().size(),true));
+        dealer.addCard(card);
         deck.remove(0);
     }
 
-    public static void setStake(Player P, int amount){
-        P.setStake(amount);
-        P.removeBalance(amount);
+    public static void SetBet(Player player, int amount){
+        player.setStake(amount);
+        player.removeBalance(amount);
     }
+
 
     //implement Split
+    public static Player Split(Player player, List<Card> deck) {
 
-    public static Player Split(Player P, List<Card> deck) {
-        boolean hasTalon=false;
-        List<Card> cards=P.getHoldingCards();
+        Player ret = new Player(player.getPlayerName() + "Split", player.getStake());
+        ret.setStake(player.getStake());
 
-        if(cards.size()==2){
+        ret.addCard(player.getCard(1));
 
-            if(cards.get(0).getValue()==cards.get(1).getValue()){
-                Player ret=new Player(P.getPlayerName()+" Split", P.getStake());
-                ret.setStake(P.getStake());
+        player.removeCard(1);
 
-                List <Card> temp=P.getHoldingCards();
+        GiveCardToPlayer(player, deck);
 
-                ret.addCard(temp.get(0));
-                temp.remove(0);
+        GiveCardToPlayer(ret, deck);
 
-                P.clearHoldingCards();
-                giveCardToPlayer(P,temp);
-
-                giveCardToPlayer(P, deck);
-                giveCardToPlayer(ret, deck);
-
-                return ret;
-            }
-        }
-        return null;
+        return ret;
     }
 
-    public static void DoubleDown(Player P, List<Card> deck) {
-        P.removeBalance(P.getStake());
-        P.setStake(P.getStake()*2);
-        giveCardToPlayer(P,deck);
+    public static void DoubleDown(Player player, List<Card> deck) {
+        player.removeBalance(player.getStake());
+        player.setStake(player.getStake()*2);
+        GiveCardToPlayer(player,deck);
     }
 
-    public static void BlackJackPayout(Player P){
-        P.addBalance(P.getStake()*2.5);
-        P.setStake(0);
+    public static void BlackJackPayout(Player player){
+        player.addBalance(player.getStake()*2.5);
+        player.setStake(0);
     }
-    public static void winPayout(Player P){
-        P.addBalance(P.getStake()*2);
-        P.setStake(0);
+    public static void WinPayout(Player player){
+        player.addBalance(player.getStake()*2);
+        player.setStake(0);
     }
-    public static void pushPayout(Player P){
-        P.addBalance(P.getStake()*1);
-        P.setStake(0);
+    public static void PushPayout(Player player){
+        player.addBalance(player.getStake()*1);
+        player.setStake(0);
     }
-    public static void lostPayout(Player P){
-        P.setStake(0);
+    public static void LostPayout(Player player){
+        player.setStake(0);
+    }
+    public static void SplitPayout(Player split){
+
     }
 
-    public static boolean win(Player P, Dealer D){
+    public static boolean Win(Player player, Dealer dealer){
         boolean ret;
 
-        if(DealerHasOverdrawn(D)){
+        if(DealerHasOverdrawn(dealer)){
             ret=true;
         }else{
             int PcardValue=0;
-            for(int i=0; i<P.getHoldingCards().size();i++){
-                PcardValue+=P.getHoldingCards().get(i).getValue();
+            for(int i=0; i<player.getHoldingCards().size();i++){
+                PcardValue+=player.getHoldingCards().get(i).getValue();
             }
 
             int DcardValue=0;
-            for(int i=0; i<D.getHoldingCards().size();i++){
-                DcardValue+=D.getHoldingCards().get(i).getValue();
+            for(int i=0; i<dealer.getHoldingCards().size();i++){
+                DcardValue+=dealer.getHoldingCards().get(i).getValue();
             }
 
             ret= PcardValue > DcardValue;
@@ -125,46 +111,46 @@ public class GameMethods {
 
         return ret;
     }
-    public static boolean push(Player P, Dealer D){
+    public static boolean Push(Player player, Dealer dealer){
 
         boolean ret;
         int PcardValue=0;
-        for(int i=0; i<P.getHoldingCards().size();i++){
-            PcardValue+=P.getHoldingCards().get(i).getValue();
+        for(int i=0; i<player.getHoldingCards().size();i++){
+            PcardValue+=player.getHoldingCards().get(i).getValue();
         }
         int DcardValue=0;
-        for(int i=0; i<D.getHoldingCards().size();i++){
-            DcardValue+=D.getHoldingCards().get(i).getValue();
+        for(int i=0; i<dealer.getHoldingCards().size();i++){
+            DcardValue+=dealer.getHoldingCards().get(i).getValue();
         }
 
         ret= PcardValue == DcardValue;
         return ret;
     }
 
-    public static boolean lost(Player P, Dealer D){
+    public static boolean Lost(Player player, Dealer dealer){
         boolean ret;
-        if(PlayerHasOverdrawn(P)){
+        if(PlayerHasOverdrawn(player)){
             ret=true;
         }else{
 
-            int PcardValue=PlayerValueCalculator(P);
-            int DcardValue=DealerValueCalculator(D);
+            int PcardValue=PlayerValueCalculator(player);
+            int DcardValue=DealerValueCalculator(dealer);
 
             ret= PcardValue < DcardValue;
         }
         return ret;
     }
 
-    public static boolean PlayerHasOverdrawn(Player P){
+    public static boolean PlayerHasOverdrawn(Player player){
         boolean ret;
         int PcardValue=0;
-        for(int i=0; i<P.getHoldingCards().size();i++){
-            PcardValue+=P.getHoldingCards().get(i).getValue();
+        for(int i=0; i<player.getHoldingCards().size();i++){
+            PcardValue+=player.getHoldingCards().get(i).getValue();
         }
         if(PcardValue>21){
             ret=true;
-            for(int i=0; i<P.getHoldingCards().size();i++){
-                if(P.getHoldingCards().get(i).getValue()==11){
+            for(int i=0; i<player.getHoldingCards().size();i++){
+                if(player.getHoldingCards().get(i).getValue()==11){
                     PcardValue-=10;
                     ret=false;
                 }
@@ -177,25 +163,25 @@ public class GameMethods {
         }
         return ret;
     }
-    public static boolean DealerHasOverdrawn(Dealer D){
+    public static boolean DealerHasOverdrawn(Dealer dealer){
         boolean ret;
         int DcardValue=0;
-        for(int i=0; i<D.getHoldingCards().size();i++){
-            DcardValue+=D.getHoldingCards().get(i).getValue();
+        for(int i=0; i<dealer.getHoldingCards().size();i++){
+            DcardValue+=dealer.getHoldingCards().get(i).getValue();
         }
         ret= DcardValue > 21;
         return ret;
     }
 
 
-    public static int PlayerValueCalculator(Player P){
+    public static int PlayerValueCalculator(Player player){
         int PcardValue=0;
-        for(int i=0; i<P.getHoldingCards().size();i++){
-            PcardValue+=P.getHoldingCards().get(i).getValue();
+        for(int i=0; i<player.getHoldingCards().size();i++){
+            PcardValue+=player.getHoldingCards().get(i).getValue();
         }
         if(PcardValue>21){
-            for(int i=0; i<P.getHoldingCards().size();i++){ //checks for As
-                if(P.getHoldingCards().get(i).getValue()==11){
+            for(int i=0; i<player.getHoldingCards().size();i++){ //checks for As
+                if(player.getHoldingCards().get(i).getValue()==11){
                     PcardValue-=10;
                     break;
                 }
@@ -203,14 +189,14 @@ public class GameMethods {
         }
         return PcardValue;
     }
-    public static int DealerValueCalculator(Dealer D){
+    public static int DealerValueCalculator(Dealer dealer){
         int PcardValue=0;
-        for(int i=0; i<D.getHoldingCards().size();i++){
-            PcardValue+=D.getHoldingCards().get(i).getValue();
+        for(int i=0; i<dealer.getHoldingCards().size();i++){
+            PcardValue+=dealer.getHoldingCards().get(i).getValue();
         }
         if(PcardValue>21){
-            for(int i=0; i<D.getHoldingCards().size();i++){ //checks for As
-                if(D.getHoldingCards().get(i).getValue()==11){
+            for(int i=0; i<dealer.getHoldingCards().size();i++){ //checks for As
+                if(dealer.getHoldingCards().get(i).getValue()==11){
                     PcardValue-=10;
                     break;
                 }
