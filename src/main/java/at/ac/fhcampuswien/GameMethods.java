@@ -2,46 +2,48 @@ package at.ac.fhcampuswien;
 
 
 
-import java.io.FileNotFoundException;
+import at.ac.fhcampuswien.Objects.Card;
+import at.ac.fhcampuswien.Objects.Dealer;
+import at.ac.fhcampuswien.Objects.Player;
+
 import java.util.List;
-import java.util.Scanner;
 
 public class GameMethods {
     private static boolean hasTalon=false;
 
-    public static void giveCardToPlayer(Player P, List<Card> deck) throws FileNotFoundException {
+    public static void giveCardToPlayer(Player P, List<Card> deck) {
         Card card=deck.get(0);
-        card.setTexture(AppController.CardTextureAssigner(card, P.getHoldingCards().size(),false));
+        if(card.getID().equals("Talon")){ //Talon Checker
+            hasTalon=true;
+            deck.remove(0);
+            card=deck.get(0);
+        }
+        card.setImageView(AppController.CardTextureAssigner(card, P.getHoldingCards().size(),false));
         P.addCard(card);
         deck.remove(0);
-
-
-        //Talon Checker
-        if(P.getHoldingCards().get(P.getHoldingCards().size()-1).getValue()==0){
-            hasTalon=true;
-            Card card1=deck.get(0);
-            P.addCard(card1);
-            deck.remove(0);
-        }
     }
-    public static void giveCardToDealer(Dealer D, List<Card> deck) throws FileNotFoundException {
+
+    public static boolean talonFound(){
+        return hasTalon;
+    }
+    public static void resetTalon(){
+        hasTalon=false;
+    }
+
+    public static void giveCardToDealer(Dealer D, List<Card> deck) {
         Card card=deck.get(0);
-        card.setTexture(AppController.CardTextureAssigner(card, D.getHoldingCards().size(),true));
+        if(card.getID().equals("Talon")){ //Talon Checker
+            hasTalon=true;
+            deck.remove(0);
+            card=deck.get(0);
+        }
+        card.setImageView(AppController.CardTextureAssigner(card, D.getHoldingCards().size(),true));
         D.addCard(card);
         deck.remove(0);
-
-
-        //Talon Checker
-        if(D.getHoldingCards().get(D.getHoldingCards().size()-1).getValue()==0){
-            hasTalon=true;
-            Card card1=deck.get(0);
-            D.addCard(card1);
-            deck.remove(0);
-        }
     }
-    public static void Hit(Player P, List<Card> deck) throws FileNotFoundException {
+    public static void Hit(Player P, List<Card> deck) {
         Card card=deck.get(0);
-        card.setTexture(AppController.CardTextureAssigner(card, P.getHoldingCards().size(),false));
+        card.setImageView(AppController.CardTextureAssigner(card, P.getHoldingCards().size(),false));
         P.addCard(card);
         deck.remove(0);
     }
@@ -53,7 +55,7 @@ public class GameMethods {
 
     //implement Split
 
-    public static Player Split(Player P, List<Card> deck) throws FileNotFoundException {
+    public static Player Split(Player P, List<Card> deck) {
         boolean hasTalon=false;
         List<Card> cards=P.getHoldingCards();
 
@@ -80,40 +82,30 @@ public class GameMethods {
         return null;
     }
 
-    public static void DoubleDown(Player P, List<Card> deck) throws FileNotFoundException {
+    public static void DoubleDown(Player P, List<Card> deck) {
         P.removeBalance(P.getStake());
         P.setStake(P.getStake()*2);
         giveCardToPlayer(P,deck);
     }
 
-    public static void BlackJack(Player P, Dealer D){
-        P.clearHoldingCards();
+    public static void BlackJackPayout(Player P){
         P.addBalance(P.getStake()*2.5);
         P.setStake(0);
-        D.clearHoldingCards();
     }
-    public static void winPayout(Player P, Dealer D){
-        P.clearHoldingCards();
+    public static void winPayout(Player P){
         P.addBalance(P.getStake()*2);
         P.setStake(0);
-        D.clearHoldingCards();
     }
-    public static void pushPayout(Player P, Dealer D){
-        P.clearHoldingCards();
+    public static void pushPayout(Player P){
         P.addBalance(P.getStake()*1);
         P.setStake(0);
-        D.clearHoldingCards();
     }
-    public static void lostPayout(Player P, Dealer D){
-        P.clearHoldingCards();
+    public static void lostPayout(Player P){
         P.setStake(0);
-        D.clearHoldingCards();
     }
-
-
 
     public static boolean win(Player P, Dealer D){
-        boolean ret=false;
+        boolean ret;
 
         if(DealerHasOverdrawn(D)){
             ret=true;
@@ -122,16 +114,13 @@ public class GameMethods {
             for(int i=0; i<P.getHoldingCards().size();i++){
                 PcardValue+=P.getHoldingCards().get(i).getValue();
             }
+
             int DcardValue=0;
             for(int i=0; i<D.getHoldingCards().size();i++){
                 DcardValue+=D.getHoldingCards().get(i).getValue();
             }
 
-            if(PcardValue>DcardValue){
-                ret=true;
-            }else{
-                ret=false;
-            }
+            ret= PcardValue > DcardValue;
         }
 
         return ret;
@@ -148,11 +137,7 @@ public class GameMethods {
             DcardValue+=D.getHoldingCards().get(i).getValue();
         }
 
-        if(PcardValue==DcardValue){
-            ret=true;
-        }else{
-            ret=false;
-        }
+        ret= PcardValue == DcardValue;
         return ret;
     }
 
@@ -162,19 +147,10 @@ public class GameMethods {
             ret=true;
         }else{
 
-            int PcardValue=0;
-            for(int i=0; i<P.getHoldingCards().size();i++){
-                PcardValue+=P.getHoldingCards().get(i).getValue();
-            }
-            int DcardValue=0;
-            for(int i=0; i<D.getHoldingCards().size();i++){
-                DcardValue+=D.getHoldingCards().get(i).getValue();
-            }
-            if(PcardValue<DcardValue){
-                ret=true;
-            }else{
-                ret=false;
-            }
+            int PcardValue=PlayerValueCalculator(P);
+            int DcardValue=DealerValueCalculator(D);
+
+            ret= PcardValue < DcardValue;
         }
         return ret;
     }
@@ -207,29 +183,40 @@ public class GameMethods {
         for(int i=0; i<D.getHoldingCards().size();i++){
             DcardValue+=D.getHoldingCards().get(i).getValue();
         }
-        if(DcardValue>21){
-            ret=true;
-        }else{
-            ret=false;
-        }
+        ret= DcardValue > 21;
         return ret;
     }
 
-    public static boolean endGame(){
-        Scanner scanner= new Scanner(System.in);
-        String a;
-        System.out.println("Do you wand to end the game? Yes/No");
 
-        do{
-            a = scanner.nextLine();
-
-            if(a.contains("Yes")){
-                return true;
-            }else if(a.contains("No")){
-                return false;
+    public static int PlayerValueCalculator(Player P){
+        int PcardValue=0;
+        for(int i=0; i<P.getHoldingCards().size();i++){
+            PcardValue+=P.getHoldingCards().get(i).getValue();
+        }
+        if(PcardValue>21){
+            for(int i=0; i<P.getHoldingCards().size();i++){ //checks for As
+                if(P.getHoldingCards().get(i).getValue()==11){
+                    PcardValue-=10;
+                    break;
+                }
             }
-            System.out.println("Please enter 'Yes' or 'No'!");
-        }while (true);
+        }
+        return PcardValue;
+    }
+    public static int DealerValueCalculator(Dealer D){
+        int PcardValue=0;
+        for(int i=0; i<D.getHoldingCards().size();i++){
+            PcardValue+=D.getHoldingCards().get(i).getValue();
+        }
+        if(PcardValue>21){
+            for(int i=0; i<D.getHoldingCards().size();i++){ //checks for As
+                if(D.getHoldingCards().get(i).getValue()==11){
+                    PcardValue-=10;
+                    break;
+                }
+            }
+        }
+        return PcardValue;
     }
 }
 

@@ -1,6 +1,5 @@
 package at.ac.fhcampuswien;
 
-import at.ac.fhcampuswien.alteVersionen.UI_Controller;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -18,23 +17,11 @@ public class App extends Application {
         stage.setOnCloseRequest(e -> {
             e.consume();
             ctrl.exit();
-            //loader.<NotesController>getController().exit(); // bug - controller is null - seems to be deprecated code
         });
 
         Scene scene = new Scene(root);
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
     }
 }
-
-/*@Override
-    public void start(Stage primaryStage) {
-        primaryStage.setTitle("Hello World!");
-        Button btn = new Button();
-        btn.setText("Hello JavaFX!");
-        btn.setOnAction( (event) -> Platform.exit() );
-        Pane root = new StackPane();
-        root.getChildren().add(btn);
-        primaryStage.setScene(new Scene(root, 300, 150));
-        primaryStage.show();
-    }*/

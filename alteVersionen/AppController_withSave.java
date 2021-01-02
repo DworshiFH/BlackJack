@@ -1,6 +1,10 @@
-package at.ac.fhcampuswien;
+package at.ac.fhcampuswien.alteVersionen;
 
-import at.ac.fhcampuswien.Objects.*;
+import at.ac.fhcampuswien.GameMethods;
+import at.ac.fhcampuswien.Objects.Card;
+import at.ac.fhcampuswien.Objects.Dealer;
+import at.ac.fhcampuswien.Objects.Deck;
+import at.ac.fhcampuswien.Objects.Player;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -14,7 +18,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
 
-public class AppController {
+public class AppController_withSave {
 
     @FXML
     public Button setStakeButton;
@@ -45,36 +49,55 @@ public class AppController {
     @FXML
     private TextArea terminal;
 
-    Card talon=new Card("Talon",0);
+
+    @FXML
+    public TextArea showSlotsOld;
+    @FXML
+    public TextField chooseSaveSlotNew;
+    @FXML
+    public TextField enterPlayerBalance;
+    @FXML
+    public Button startGameButton;
+    @FXML
+    public TextField enterPlayerName;
+    @FXML
+    public Button newGame;
+    @FXML
+    public Button resumeOld;
+    @FXML
+    public Pane newGamePane;
+    @FXML
+    public Pane chooseGamePane;
+    @FXML
+    public Pane resumeOldPane;
+    @FXML
+    public TextArea showSlotsNew;
+    @FXML
+    public TextField chooseSaveSlotOld;
+
+
+    //SaveSlots playerList=new SaveSlots();
 
     Player player1;
     Dealer dealer;
     List<Card> deck;
 
-    private boolean lost =false;
-    private boolean playing;
-    private boolean isBlackJack;
-    private boolean push;
-    private boolean talonFound;
-    private boolean win;
-    private Player splitPlayer1;
-    private boolean showFullDealerValue;
+    boolean lost =false;
+    boolean playing;
+    boolean isBlackJack;
+    boolean push;
+    boolean talonFound;
+    boolean win;
+    Player splitPlayer1;
+    boolean showFullDealerValue;
+
+    //boolean isFirstStake;
 
     private static int numOfCardsDealer=0;
-    private double oldStake = 0;
+    double oldStake = 0;
 
-    public void newRound() throws FileNotFoundException {
-        if(talonFound){
-            deck=Deck.makeDeck();
-            talonFound=false;
-            GameMethods.resetTalon();
-        }
-        showTalon();
-
-        //clears PlayingField
-        playerPane.getChildren().clear();
-        dealerPane.getChildren().clear();
-
+    public void newRound() {
+        clearPlayingField();
         newRoundButton.setVisible(false);
         setStakeButton.setDisable(false);
 
@@ -112,56 +135,67 @@ public class AppController {
         GameMethods.setStake(player1, amount);
         double printAmount=oldStake+amount;
 
-        terminal.clear();
-        terminal.setText(terminal.getText()+"Your Stake: "+printAmount);
-
-        GameMethods.giveCardToPlayer(player1,deck);
-        generateCardPlayer();
-        GameMethods.giveCardToPlayer(player1,deck);
-        generateCardPlayer();
-
-        GameMethods.giveCardToDealer(dealer,deck);
-        generateCardDealer();
-        GameMethods.giveCardToDealer(dealer,deck);
-        generateCardDealer();
-
-        //checks for Blackjack
-        if(player1.getCard(0).getValue()==11 && player1.getCard(1).getValue()==10){
-            isBlackJack=true;
-        }else if(player1.getCard(1).getValue()==11 && player1.getCard(0).getValue()==10) {
-            isBlackJack=true;
-        }
-        if(isBlackJack){
-            DisableButtons();
-            ShowDealerValue();
-            GameMethods.BlackJackPayout(player1);
+        if(true){
             terminal.clear();
-            terminal.setText("BlackJack!");
-            setStakeButton.setDisable(true);
-            MakeDealerCardsVisible();
-            newRoundButton.setVisible(true);
+            terminal.setText(terminal.getText()+"Your Stake: "+printAmount);
+
+            GameMethods.giveCardToDealer(dealer,deck);
+            generateCardDealer();
+            GameMethods.giveCardToDealer(dealer,deck);
+            generateCardDealer();
+
+            GameMethods.giveCardToPlayer(player1,deck);
+            generateCardPlayer();
+            GameMethods.giveCardToPlayer(player1,deck);
+            generateCardPlayer();
+
+            //checks for Blackjack
+            if(player1.getCard(0).getValue()==11 && player1.getCard(1).getValue()==10){
+                isBlackJack=true;
+            }else if(player1.getCard(1).getValue()==11 && player1.getCard(0).getValue()==10) {
+                isBlackJack=true;
+            }
+            if(isBlackJack){
+                DisableButtons();
+                GameMethods.BlackJackPayout(player1, dealer);
+                terminal.clear();
+                terminal.setText("BlackJack!");
+                setStakeButton.setDisable(true);
+                MakeDealerCardsVisible();
+                newRoundButton.setVisible(true);
+            }
+
+            //isFirstStake=false;
         }else{
-            //enables all Buttons
-            hitButton.setDisable(false);
-            splitButton.setDisable(false);
-            doubleDownButton.setDisable(false);
-            StandButton.setDisable(false);
+            terminal.setText(terminal.getText()+"\n"+"Your Stake: "+printAmount);
         }
+        //enables all Buttons
+        hitButton.setDisable(false);
+        splitButton.setDisable(false);
+        doubleDownButton.setDisable(false);
+        StandButton.setDisable(false);
 
         setStakeButton.setDisable(true);
+
         showBalance.setText("Your Balance: "+player1.getBalance());
     }
     private final String DealerValueWindowDefault = "Card Value: ";
 
     public void generateCardDealer() throws FileNotFoundException {
-        talonFound=GameMethods.talonFound();
-        if(talonFound){
-            showTalon();
+        int DcardValue=0;
+        dealerPane.getChildren().add(dealer.getHoldingCards().get(dealer.getHoldingCards().size()-1).getTexture());
+        //calculates PlayerCardValues
+        for(int i=0; i<dealer.getHoldingCards().size();i++){
+            DcardValue+=dealer.getHoldingCards().get(i).getValue();
         }
-        int DcardValue=GameMethods.DealerValueCalculator(dealer);
-
-        dealerPane.getChildren().add(dealer.getHoldingCards().get(dealer.getHoldingCards().size()-1).getImageView());
-
+        if(DcardValue>21){
+            for(int i=0; i<dealer.getHoldingCards().size();i++){
+                if(dealer.getHoldingCards().get(i).getValue()==11){
+                    DcardValue-=10;
+                    break;
+                }
+            }
+        }
         if(showFullDealerValue){
             DealerValueWindow.setText(DealerValueWindowDefault + DcardValue);
         }else{
@@ -179,29 +213,23 @@ public class AppController {
         Image image = new Image(new FileInputStream(path));
         dealer.getHoldingCards().get(1).setImage(image);
     }
-    public void generateCardPlayer() throws FileNotFoundException {
-        talonFound=GameMethods.talonFound();
-        if(talonFound){
-            showTalon();
+    public void generateCardPlayer(){
+        int PcardValue=0;
+        playerPane.getChildren().add(player1.getHoldingCards().get(player1.getHoldingCards().size()-1).getTexture());
+        //calculates PlayerCardValues
+        for(int i=0; i<player1.getHoldingCards().size();i++){
+            PcardValue+=player1.getHoldingCards().get(i).getValue();
         }
-        int PcardValue=GameMethods.PlayerValueCalculator(player1);
-
-        playerPane.getChildren().add(player1.getHoldingCards().get(player1.getHoldingCards().size()-1).getImageView());
-
+        if(PcardValue>21){
+            for(int i=0; i<player1.getHoldingCards().size();i++){
+                if(player1.getHoldingCards().get(i).getValue()==11){
+                    PcardValue-=10;
+                    break;
+                }
+            }
+        }
         PlayerValueWindow.setText("Card Value: " + PcardValue);
     }
-    public void showTalon() throws FileNotFoundException {
-        Image talonImage=new Image(new FileInputStream(System.getProperty("user.dir")+"/src/main/java/at/ac/fhcampuswien/textures/cards/Talon.jpg"));
-        ImageView talonImageView=new ImageView();
-        talonImageView.setId(talon.getID());
-        talonImageView.setImage(talonImage);
-        talonImageView.setLayoutX(50);
-        talonImageView.setLayoutY(50);
-        talonImageView.setFitHeight(85);
-        talonImageView.setFitWidth(55);
-        dealerPane.getChildren().add(talonImageView);
-    }
-
 
     public void DealerDraws() throws FileNotFoundException {
         int dealerCardValue=0;
@@ -227,45 +255,59 @@ public class AppController {
             if(GameMethods.DealerHasOverdrawn(dealer)){
                 terminal.appendText("\nDealer has overdrawn.");
             }
-            GameMethods.winPayout(player1);
+            GameMethods.winPayout(player1,dealer);
             setStakeButton.setDisable(true);
             ShowDealerValue();
             MakeDealerCardsVisible();
+            //newRound();
             newRoundButton.setVisible(true);
         }else if(push){
             terminal.clear();
             terminal.setText("Push!");
-            GameMethods.pushPayout(player1);
+            GameMethods.pushPayout(player1,dealer);
             setStakeButton.setDisable(true);
             ShowDealerValue();
             MakeDealerCardsVisible();
+            //newRound();
             newRoundButton.setVisible(true);
         }else if(lost){
             terminal.clear();
             terminal.setText("Lost!");
-            GameMethods.lostPayout(player1);
+            GameMethods.lostPayout(player1,dealer);
             setStakeButton.setDisable(true);
             ShowDealerValue();
             MakeDealerCardsVisible();
+            //newRound();
             newRoundButton.setVisible(true);
         }
     }
 
+    public void clearPlayingField() {
+        playerPane.getChildren().clear();
+        dealerPane.getChildren().clear();
+    }
+
     public void hit() throws FileNotFoundException {
-        doubleDownButton.setDisable(true);
-        splitButton.setDisable(true);
-
+        MakeDealerCardsVisible();
+        ShowDealerValue();
         GameMethods.Hit(player1,deck);
-
         generateCardPlayer();
-
-        if(GameMethods.PlayerHasOverdrawn(player1)){
+        lost =GameMethods.lost(player1, dealer);
+        if(lost){
             terminal.clear();
-            terminal.setText("Bust!");
-            GameMethods.lostPayout(player1);
+            if(GameMethods.PlayerHasOverdrawn(player1)){
+                terminal.setText("You have Overdrawn!");
+            }else{
+                terminal.setText("You have Lost!\nDealer Value > Player Value.");
+            }
+            ShowDealerValue();
+            GameMethods.lostPayout(player1, dealer);
             setStakeButton.setDisable(true);
+            //newRound();
             newRoundButton.setVisible(true);
         }
+        doubleDownButton.setDisable(true);
+        splitButton.setDisable(true);
     }
 
     public void DisableButtons(){
@@ -285,14 +327,14 @@ public class AppController {
             GameMethods.DoubleDown(player1,deck);
             generateCardPlayer();
             //rotates the card by 90°
-            player1.getHoldingCards().get(player1.getHoldingCards().size()-1).getImageView().setRotate(90);
+            player1.getHoldingCards().get(player1.getHoldingCards().size()-1).getTexture().setRotate(90);
             lost =GameMethods.lost(player1, dealer);
 
             if(GameMethods.PlayerHasOverdrawn(player1)){
                 terminal.clear();
                 terminal.setText("You have Overdrawn!");
                 ShowDealerValue();
-                GameMethods.lostPayout(player1);
+                GameMethods.lostPayout(player1, dealer);
                 setStakeButton.setDisable(true);
                 newRoundButton.setVisible(true);
             }else{
@@ -324,7 +366,7 @@ public class AppController {
 
     private static final int offset = 110;
 
-    public static ImageView CardTextureAssigner(Card card, int cardnum, boolean isDealer) { //true = Dealer
+    public static ImageView CardTextureAssigner(Card card, int cardnum, boolean isDealer) { //false = Dealer
         int yOffset;
         if(isDealer){
             yOffset=50;
@@ -359,14 +401,61 @@ public class AppController {
         Platform.exit();
     }
 
-    public void initialize() throws FileNotFoundException { //is like Main
+    public void initialize(){ //is like Main
         player1=new Player("Kurti",1000);
         dealer=new Dealer();
         deck= Deck.makeDeck();
         newRoundButton.setVisible(false);
-        talonFound=false;
+
+        //initPane.setVisible(true);
+        //initPane.setVisible(false);
+
 
         newRound();
     }
+
+
+
+    //save and initialize Methods
+
+    //private final int maxSlots=10;
+    //private final int minSlots=1;
+
+
+    public void resumeOld(){
+        /*chooseGamePane.setVisible(false);
+        chooseGamePane.setDisable(true);
+
+        for(int i=0;i<maxSlots;i++){
+            showSlotsOld.appendText("Slot "+ (i+1)+": "+ playerList.getPlayer(i)+"\n");
+        }
+
+
+        playerList.getPlayer(Integer.parseInt(chooseSaveSlotOld.getText()));
+*/
+    }
+
+
+
+    public void newGame(){
+        /*chooseGamePane.setVisible(false);
+        chooseGamePane.setDisable(true);
+
+        //print out Slots
+        for(int i=0;i<maxSlots;i++){
+            showSlotsNew.appendText("Slot "+ (i+1)+": "+ playerList.getPlayer(i)+"\n");
+        }
+
+        playerList.setPlayerList(enterPlayerName.getText(),
+                Double.parseDouble(enterPlayerBalance.getText()),
+                Integer.parseInt(chooseSaveSlotNew.getText()));
+
+        player1=playerList.getPlayer(Integer.parseInt(chooseSaveSlotNew.getText()));
+*/
+
+
+
+    }
+
 
 }

@@ -1,6 +1,6 @@
 package at.ac.fhcampuswien.alteVersionen;
 
-import at.ac.fhcampuswien.Card;
+import at.ac.fhcampuswien.Objects.Card;
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
