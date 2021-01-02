@@ -3,7 +3,49 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.fhcampuswien.alteVersionen.UI_Controller">
+<Pane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="667.0" prefWidth="926.0"
+      style="-fx-background-color: green;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="at.ac.fhcampuswien.AppController">
+    <children>
+        <Button fx:id="hitButton" disable="true" layoutX="830.0" layoutY="326.0" mnemonicParsing="false" onAction="#hit" text="Hit" />
+        <Button fx:id="splitButton" disable="true" layoutX="869.0" layoutY="325.0" mnemonicParsing="false" onAction="#Split" text="Split" />
+        <Button fx:id="doubleDownButton" disable="true" layoutX="811.0" layoutY="357.0" mnemonicParsing="false" onAction="#DoubleDown" text="Double Down" />
+        <Button fx:id="StandButton" disable="true" layoutX="772.0" layoutY="326.0" mnemonicParsing="false" onAction="#Stand" text="Stand" />
+        <Pane fx:id="playerPane" layoutX="27.0" layoutY="396.0" prefHeight="247.0" prefWidth="865.0" style="-fx-border-color: white;" />
+        <TextField fx:id="stakesFiled" layoutX="27.0" layoutY="314.0" prefHeight="26.0" prefWidth="141.0" promptText="Set Your Stakes" />
+        <Pane fx:id="dealerPane" disable="true" layoutX="27.0" layoutY="35.0" prefHeight="260.0" prefWidth="865.0" style="-fx-border-color: white;" />
+        <TextArea fx:id="DealerValueWindow" editable="false" layoutX="725.0" layoutY="44.0" prefHeight="38.0" prefWidth="156.0" text="Card Value: " />
+        <TextArea fx:id="PlayerValueWindow" editable="false" layoutX="727.0" layoutY="406.0" prefHeight="38.0" prefWidth="156.0" text="Card Value: " />
+        <Button fx:id="setStakeButton" layoutX="176.0" layoutY="313.0" mnemonicParsing="false" onAction="#RoundStart" text="Set Stake" />
+        <TextField fx:id="showBalance" editable="false" layoutX="27.0" layoutY="357.0" prefHeight="26.0" prefWidth="190.0" />
+        <Button fx:id="newRoundButton" layoutX="494.0" layoutY="334.0" mnemonicParsing="false" onAction="#newRound" text="New Round" visible="false" />
+        <TextArea fx:id="terminal" editable="false" layoutX="270.0" layoutY="309.0" prefHeight="76.0" prefWidth="199.0" />
 
-    <TextArea fx:id="textTest" prefHeight="200.0" prefWidth="200.0" text="asdf" />
-</VBox>
+        <Pane fx:id="chooseGamePane" layoutX="263.0" layoutY="186.0" prefHeight="307.0" prefWidth="400.0"
+              style="-fx-background-color: white; -fx-border-color: black;" visible="false">
+            <children>
+                <Button fx:id="newGame" layoutX="68.0" layoutY="141.0" mnemonicParsing="false" onAction="#newGame" text="New Game" />
+                <Button fx:id="resumeOld" layoutX="230.0" layoutY="141.0" mnemonicParsing="false" onAction="#resumeOld" text="Resume Old" />
+            </children></Pane>
+
+        <Pane fx:id="newGamePane" disable="true" layoutX="263.0" layoutY="186.0" prefHeight="307.0"
+              prefWidth="400.0" style="-fx-background-color: white; -fx-border-color: black;" visible="false">
+            <children>
+                <TextField fx:id="enterPlayerName" layoutX="23.0" layoutY="24.0" promptText="Enter your Name" />
+                <TextField fx:id="enterPlayerBalance" layoutX="23.0" layoutY="68.0" promptText="Enter Your Balance" />
+                <TextField fx:id="chooseSaveSlotNew" layoutX="23.0" layoutY="112.0" promptText="Save Slot (1-10)" />
+                <Button fx:id="startGameButton" layoutX="24.0" layoutY="257.0" mnemonicParsing="false" text="Start Game" />
+                <TextField layoutX="23.0" layoutY="155.0" promptText="Minimal Bet" />
+                <TextField layoutX="23.0" layoutY="199.0" promptText="Maximum Bet" />
+                <TextArea fx:id="showSlotsNew" layoutX="208.0" layoutY="24.0" prefHeight="260.0" prefWidth="170.0" />
+
+            </children></Pane>
+
+        <Pane fx:id="resumeOldPane" layoutX="263.0" layoutY="186.0" prefHeight="307.0" prefWidth="400.0" style="-fx-background-color: white; -fx-border-color: black;" visible="false">
+            <children>
+                <TextArea fx:id="showSlotsOld" layoutX="209.0" layoutY="24.0" prefHeight="260.0" prefWidth="170.0" />
+                <TextField fx:id="chooseSaveSlotOld" layoutX="21.0" layoutY="24.0" promptText="Choose Slot (1-10)" />
+            </children></Pane>
+
+    </children>
+</Pane>
