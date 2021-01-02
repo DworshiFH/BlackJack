@@ -8,10 +8,13 @@
       <Button fx:id="hitButton" disable="true" layoutX="828.0" layoutY="325.0" mnemonicParsing="false" onAction="#Hit" text="Hit" />
       <Button fx:id="splitButton" disable="true" layoutX="868.0" layoutY="324.0" mnemonicParsing="false" onAction="#Split" text="Split" />
       <Button fx:id="doubleDownButton" disable="true" layoutX="818.0" layoutY="362.0" mnemonicParsing="false" onAction="#DoubleDown" text="Double Down" />
-      <Button fx:id="standButton" disable="true" layoutX="771.0" layoutY="325.0" mnemonicParsing="false" onAction="#Stand" text="Stand" />
-      <Pane fx:id="playerPane" layoutX="14.0" layoutY="413.0" prefHeight="247.0" prefWidth="865.0" style="-fx-border-color: white;" />
+      <Button fx:id="standButton" disable="true" layoutX="773.0" layoutY="325.0" mnemonicParsing="false" onAction="#Stand" text="Stand" />
+      <Pane fx:id="playerPane" layoutX="14.0" layoutY="407.0" prefHeight="247.0" prefWidth="901.0" style="-fx-border-color: white;">
+         <children>
+            <Pane layoutX="540.0" layoutY="47.0" prefHeight="153.0" prefWidth="116.0" />
+         </children></Pane>
       <TextField fx:id="stakesFiled" layoutX="27.0" layoutY="314.0" prefHeight="26.0" prefWidth="141.0" promptText="Place your bet" />
-      <Pane fx:id="dealerPane" disable="true" layoutX="27.0" layoutY="35.0" prefHeight="260.0" prefWidth="865.0" style="-fx-border-color: white;">
+      <Pane fx:id="dealerPane" disable="true" layoutX="17.0" layoutY="25.0" prefHeight="260.0" prefWidth="901.0" style="-fx-border-color: white;">
          <children>
             <Pane layoutX="797.0" layoutY="164.0" prefHeight="85.0" prefWidth="55.0" />
          </children></Pane>
@@ -20,10 +23,11 @@
       <Button fx:id="newRoundButton" layoutX="494.0" layoutY="334.0" mnemonicParsing="false" onAction="#newRound" text="New Round" visible="false" />
       <TextArea fx:id="terminal" editable="false" layoutX="270.0" layoutY="309.0" prefHeight="76.0" prefWidth="199.0" />
       <Pane prefHeight="200.0" prefWidth="200.0" />
-      <TextField fx:id="dealerValueWindow" editable="false" layoutX="737.0" layoutY="44.0" />
-      <TextField fx:id="playerValueWindow" editable="false" layoutX="583.0" layoutY="413.0" />
-      <TextField fx:id="splitValueWindow" editable="false" layoutX="736.0" layoutY="413.0" />
+      <TextField fx:id="dealerValueWindow" editable="false" layoutX="22.0" layoutY="31.0" />
+      <TextField fx:id="splitValueWindow" editable="false" layoutX="761.0" layoutY="413.0" />
       <Button fx:id="handSelectButton" layoutX="433.0" layoutY="638.0" mnemonicParsing="false" onAction="#HandSelector" text="Select Hand" />
       <TextField fx:id="showSelectedHand" editable="false" layoutX="397.0" layoutY="612.0" text="&lt;-     Selected Hand" />
+      <TextField fx:id="playerValueWindow" editable="false" layoutX="19.0" layoutY="413.0" />
+      <Button fx:id="surrenderButton" layoutX="741.0" layoutY="361.0" mnemonicParsing="false" text="Surrender" />
    </children>
 </Pane>

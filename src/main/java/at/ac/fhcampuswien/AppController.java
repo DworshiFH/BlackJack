@@ -47,6 +47,8 @@ public class AppController {
     @FXML
     public TextField showSelectedHand;
     @FXML
+    public Button surrenderButton;
+    @FXML
     private Pane mainPane;
     @FXML
     private TextArea terminal;
@@ -63,8 +65,7 @@ public class AppController {
     private boolean push;
     private boolean talonFound;
     private boolean win;
-    private boolean isFirstSplit;
-    private boolean handSelectorTracker;
+    private boolean rightHandSelected;
 
     private boolean showFullDealerValue;
 
@@ -112,12 +113,9 @@ public class AppController {
         win=false;
         lost=false;
         showFullDealerValue=false;
-        isFirstSplit=true;
-        handSelectorTracker=false;
+        rightHandSelected =false;
         handSelectButton.setVisible(false);
         showSelectedHand.setVisible(false);
-
-       //isFirstStake=true;
 
         playerValueWindow.setText("Card Value: ");
         dealerValueWindow.setText("Card Value: ");
@@ -231,6 +229,23 @@ public class AppController {
         playerValueWindow.setText("Card Value: " + PlayerCardValue);
     }
 
+    public void GenerateCardSplit() throws FileNotFoundException {
+        talonFound=GameMethods.TalonFound();
+        if(talonFound){
+            ShowTalon();
+        }
+        int PlayerCardValue=GameMethods.PlayerValueCalculator(splitPlayer);
+
+        ImageView show = splitPlayer.getHoldingCards().get(splitPlayer.getHoldingCards().size()-1).getImageView();
+
+        show.setLayoutX(560+offset);
+
+        playerPane.getChildren().add(show);
+
+        splitValueWindow.setText("Card Value Split: " + PlayerCardValue);
+    }
+
+
     public void ShowTalon() throws FileNotFoundException {
         terminal.appendText("Talon drawn!\nDeck will be reshuffled.");
 
@@ -320,14 +335,15 @@ public class AppController {
     }
 
     public void HandSelector(){ //false = left hand selected
-        if(handSelectorTracker){
+        if(rightHandSelected){
             showSelectedHand.setText("       Selected Hand     ->");
         }else{
             showSelectedHand.setText("<-     Selected Hand");
         }
-        handSelectorTracker=!handSelectorTracker;
+        rightHandSelected =!rightHandSelected;
     }
 
+    private final int splitOffset=400;
     public void Split() throws FileNotFoundException {
 
         talonFound=GameMethods.TalonFound();
@@ -339,32 +355,30 @@ public class AppController {
         handSelectButton.setVisible(true);
         showSelectedHand.setVisible(true);
 
-        if(isFirstSplit){
-            splitPlayer=GameMethods.Split(player, deck);
+        player.getCard(1).setImageViewX(player.getCard(1).getImageView().getLayoutX()+splitOffset);
 
-            playerPane.getChildren().remove(1);
+        splitPlayer=GameMethods.Split(player, deck);
+
+        GameMethods.GiveCardToPlayer(player,deck);
+        GenerateCardPlayer();
+
+        GameMethods.GiveCardToPlayer(splitPlayer,deck);
+        GenerateCardSplit();
 
 
-
-            isFirstSplit=false;
-        }else{
-            GameMethods.GiveCardToPlayer(splitPlayer,deck);
-            GenerateCardPlayer();
-        }
         //generate Card for Split
         int splitCardValue=GameMethods.PlayerValueCalculator(splitPlayer);
 
-        playerPane.getChildren().add(splitPlayer.getHoldingCards().get(splitPlayer.getHoldingCards().size()-1).getImageView());
+        /*playerPane.getChildren().add(splitPlayer.getHoldingCards().get(splitPlayer.getHoldingCards().size()-1).getImageView());
         splitPlayer.getCard(
                 splitPlayer.getHoldingCards().size()-1).getImageView().setLayoutX(
-                splitPlayer.getCard(splitPlayer.getHoldingCards().size()-1).getImageView().getLayoutX()+  300);
+                splitPlayer.getCard(splitPlayer.getHoldingCards().size()-1).getImageView().getLayoutX()+  splitOffset);*/
 
         splitValueWindow.setText("Card Value: " + splitCardValue);
-
-
-
+        GenerateCardSplit();
 
         GenerateCardPlayer();
+        splitButton.setDisable(true);
     }
 
     public void DoubleDown() throws FileNotFoundException {

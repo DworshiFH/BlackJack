@@ -24,6 +24,10 @@ public class Card {
         this.imageView = imageView;
     }
 
+    public void setImageViewX(double offset){
+        this.imageView.setLayoutX(offset);
+    }
+
     public int getValue(){
         return value;
     }

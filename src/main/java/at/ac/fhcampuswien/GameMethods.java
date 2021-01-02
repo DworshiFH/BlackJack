@@ -54,13 +54,9 @@ public class GameMethods {
         Player ret = new Player(player.getPlayerName() + "Split", player.getStake());
         ret.setStake(player.getStake());
 
-        ret.addCard(player.getCard(1));
+        ret.addCard(new Card(player.getCard(1).getID(),player.getCard(1).getValue()));
 
         player.removeCard(1);
-
-        GiveCardToPlayer(player, deck);
-
-        GiveCardToPlayer(ret, deck);
 
         return ret;
     }
