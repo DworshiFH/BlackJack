@@ -26,8 +26,8 @@
       <TextField fx:id="dealerValueWindow" editable="false" layoutX="22.0" layoutY="31.0" />
       <TextField fx:id="splitValueWindow" editable="false" layoutX="761.0" layoutY="413.0" />
       <Button fx:id="handSelectButton" layoutX="433.0" layoutY="638.0" mnemonicParsing="false" onAction="#HandSelector" text="Select Hand" />
-      <TextField fx:id="showSelectedHand" editable="false" layoutX="397.0" layoutY="612.0" text="&lt;-     Selected Hand" />
+      <TextField fx:id="showSelectedHand" editable="false" layoutX="397.0" layoutY="612.0" text="       Selected Hand     -&gt;" />
       <TextField fx:id="playerValueWindow" editable="false" layoutX="19.0" layoutY="413.0" />
-      <Button fx:id="surrenderButton" layoutX="741.0" layoutY="361.0" mnemonicParsing="false" text="Surrender" />
+      <Button fx:id="surrenderButton" layoutX="739.0" layoutY="362.0" mnemonicParsing="false" onAction="#Surrender" text="Surrender" />
    </children>
 </Pane>

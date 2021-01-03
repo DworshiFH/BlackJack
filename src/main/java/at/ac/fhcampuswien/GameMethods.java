@@ -1,7 +1,6 @@
 package at.ac.fhcampuswien;
 
 
-
 import at.ac.fhcampuswien.Objects.Card;
 import at.ac.fhcampuswien.Objects.Dealer;
 import at.ac.fhcampuswien.Objects.Player;
@@ -66,8 +65,7 @@ public class GameMethods {
         player.setStake(player.getStake()*2);
         GiveCardToPlayer(player,deck);
     }
-
-    public static void BlackJackPayout(Player player){
+        public static void BlackJackPayout(Player player){
         player.addBalance(player.getStake()*2.5);
         player.setStake(0);
     }
@@ -80,6 +78,10 @@ public class GameMethods {
         player.setStake(0);
     }
     public static void LostPayout(Player player){
+        player.setStake(0);
+    }
+    public static void SurrenderPayout(Player player){
+        player.addBalance(player.getStake()*0.5);
         player.setStake(0);
     }
     public static void SplitPayout(Player split){
@@ -165,7 +167,21 @@ public class GameMethods {
         for(int i=0; i<dealer.getHoldingCards().size();i++){
             DcardValue+=dealer.getHoldingCards().get(i).getValue();
         }
-        ret= DcardValue > 21;
+        //ret= DcardValue > 21;
+        if(DcardValue > 21){
+            ret = true;
+            for(int i=0; i<dealer.getHoldingCards().size();i++){
+                if(dealer.getHoldingCards().get(i).getValue()==11){
+                    DcardValue-=10;
+                    ret=false;
+                }
+            }
+        }else{
+            ret = false;
+        }
+        if(DcardValue > 21){
+            ret = true;
+        }
         return ret;
     }
 
