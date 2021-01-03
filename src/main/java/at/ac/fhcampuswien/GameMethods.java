@@ -94,33 +94,17 @@ public class GameMethods {
         if(DealerHasOverdrawn(dealer)){
             ret=true;
         }else{
-            int PcardValue=0;
-            for(int i=0; i<player.getHoldingCards().size();i++){
-                PcardValue+=player.getHoldingCards().get(i).getValue();
-            }
-
-            int DcardValue=0;
-            for(int i=0; i<dealer.getHoldingCards().size();i++){
-                DcardValue+=dealer.getHoldingCards().get(i).getValue();
-            }
-
+            int PcardValue=PlayerValueCalculator(player);
+            int DcardValue=DealerValueCalculator(dealer);
             ret= PcardValue > DcardValue;
         }
 
         return ret;
     }
     public static boolean Push(Player player, Dealer dealer){
-
         boolean ret;
-        int PcardValue=0;
-        for(int i=0; i<player.getHoldingCards().size();i++){
-            PcardValue+=player.getHoldingCards().get(i).getValue();
-        }
-        int DcardValue=0;
-        for(int i=0; i<dealer.getHoldingCards().size();i++){
-            DcardValue+=dealer.getHoldingCards().get(i).getValue();
-        }
-
+        int PcardValue=PlayerValueCalculator(player);
+        int DcardValue=DealerValueCalculator(dealer);
         ret= PcardValue == DcardValue;
         return ret;
     }
@@ -130,10 +114,8 @@ public class GameMethods {
         if(PlayerHasOverdrawn(player)){
             ret=true;
         }else{
-
             int PcardValue=PlayerValueCalculator(player);
             int DcardValue=DealerValueCalculator(dealer);
-
             ret= PcardValue < DcardValue;
         }
         return ret;
@@ -162,23 +144,8 @@ public class GameMethods {
         return ret;
     }
     public static boolean DealerHasOverdrawn(Dealer dealer){
-        boolean ret;
-        int DcardValue=0;
-        for(int i=0; i<dealer.getHoldingCards().size();i++){
-            DcardValue+=dealer.getHoldingCards().get(i).getValue();
-        }
-        //ret= DcardValue > 21;
-        if(DcardValue > 21){
-            ret = true;
-            for(int i=0; i<dealer.getHoldingCards().size();i++){
-                if(dealer.getHoldingCards().get(i).getValue()==11){
-                    DcardValue-=10;
-                    ret=false;
-                }
-            }
-        }else{
-            ret = false;
-        }
+        boolean ret = false;
+        int DcardValue=DealerValueCalculator(dealer);
         if(DcardValue > 21){
             ret = true;
         }
@@ -194,7 +161,10 @@ public class GameMethods {
         if(PcardValue>21){
             for(int i=0; i<player.getHoldingCards().size();i++){ //checks for As
                 if(player.getHoldingCards().get(i).getValue()==11){
-                    PcardValue-=10;
+                    player.getHoldingCards().get(i).setValue(1);
+                    for(int j=0; j<player.getHoldingCards().size();j++){
+                        PcardValue+=player.getHoldingCards().get(j).getValue();
+                    }
                     break;
                 }
             }
@@ -202,19 +172,22 @@ public class GameMethods {
         return PcardValue;
     }
     public static int DealerValueCalculator(Dealer dealer){
-        int PcardValue=0;
+        int DcardValue=0;
         for(int i=0; i<dealer.getHoldingCards().size();i++){
-            PcardValue+=dealer.getHoldingCards().get(i).getValue();
+            DcardValue+=dealer.getHoldingCards().get(i).getValue();
         }
-        if(PcardValue>21){
+        if(DcardValue>21){
             for(int i=0; i<dealer.getHoldingCards().size();i++){ //checks for As
                 if(dealer.getHoldingCards().get(i).getValue()==11){
-                    PcardValue-=10;
+                    dealer.getHoldingCards().get(i).setValue(1);
+                    for(int j=0; j<dealer.getHoldingCards().size();j++){
+                        DcardValue+=dealer.getHoldingCards().get(j).getValue();
+                    }
                     break;
                 }
             }
         }
-        return PcardValue;
+        return DcardValue;
     }
 }
 

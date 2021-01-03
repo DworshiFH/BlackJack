@@ -66,6 +66,7 @@ public class AppController {
     private boolean talonFound;
     private boolean win;
     private boolean rightHandSelected;
+    private boolean talonShow;
 
     private boolean showFullDealerValue;
 
@@ -193,7 +194,9 @@ public class AppController {
     public void GenerateCardDealer() throws FileNotFoundException {
         talonFound=GameMethods.TalonFound();
         if(talonFound){
+            if(talonShow)
             ShowTalon();
+            talonShow=false;
         }
         int DcardValue=GameMethods.DealerValueCalculator(dealer);
 
@@ -221,7 +224,9 @@ public class AppController {
     public void GenerateCardPlayer() throws FileNotFoundException {
         talonFound=GameMethods.TalonFound();
         if(talonFound){
-            ShowTalon();
+            if(talonShow)
+                ShowTalon();
+            talonShow=false;
         }
         int PlayerCardValue=GameMethods.PlayerValueCalculator(player);
 
@@ -233,7 +238,9 @@ public class AppController {
     public void GenerateCardSplit() throws FileNotFoundException {
         talonFound=GameMethods.TalonFound();
         if(talonFound){
-            ShowTalon();
+            if(talonShow)
+                ShowTalon();
+            talonShow=false;
         }
         int PlayerCardValue=GameMethods.PlayerValueCalculator(splitPlayer);
 
@@ -248,7 +255,7 @@ public class AppController {
 
 
     public void ShowTalon() throws FileNotFoundException {
-        terminal.appendText("Talon drawn!\nDeck will be reshuffled.");
+        terminal.appendText("\nTalon drawn!\nDeck will be reshuffled.");
 
         Image talonImage=new Image(new FileInputStream(System.getProperty("user.dir")+"/src/main/java/at/ac/fhcampuswien/textures/cards/Talon.jpg"));
         ImageView talonImageView=new ImageView();
@@ -263,19 +270,16 @@ public class AppController {
 
 
     public void DealerDraws() throws FileNotFoundException {
-        int dealerCardValue=0;
         showFullDealerValue =true;
-        for(int i=0;i<dealer.getHoldingCards().size();i++){
-            dealerCardValue+=dealer.getHoldingCards().get(i).getValue();
-        }
+
+        int dealerCardValue=GameMethods.DealerValueCalculator(dealer);
         if(dealerCardValue<17){
-            int i=dealer.getHoldingCards().size();
-            do{
+            while(dealerCardValue<17){
                 GameMethods.GiveCardToDealer(dealer,deck);
                 GenerateCardDealer();
-                dealerCardValue+=dealer.getHoldingCards().get(i).getValue();
-                i++;
-            }while(dealerCardValue<17);
+                dealerCardValue=GameMethods.DealerValueCalculator(dealer);
+                ShowDealerValue();
+            }
         }
         win=GameMethods.Win(player,dealer);
         push=GameMethods.Push(player,dealer);
@@ -367,7 +371,9 @@ public class AppController {
 
         talonFound=GameMethods.TalonFound();
         if(talonFound){
-            ShowTalon();
+            if(talonShow)
+                ShowTalon();
+            talonShow=false;
         }
 
         splitValueWindow.setVisible(true);
@@ -479,10 +485,7 @@ public class AppController {
     }
 
     public void ShowDealerValue(){
-        int DcardValue=0;
-        for(int i=0; i<dealer.getHoldingCards().size();i++) {
-            DcardValue += dealer.getHoldingCards().get(i).getValue();
-        }
+        int DcardValue=GameMethods.DealerValueCalculator(dealer);
         dealerValueWindow.setText(DealerValueWindowDefault+ DcardValue);
     }
 

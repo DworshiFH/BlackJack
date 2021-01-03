@@ -151,6 +151,12 @@ public class Deck{
 
         deck.add(x, talon);
 
+        //for testing purposes only
+        /*deck.add(2, HE_A);
+        deck.add(3,PI_A);
+        deck.add(4,PI_3);*/
+
+
         return deck;
     }
 
