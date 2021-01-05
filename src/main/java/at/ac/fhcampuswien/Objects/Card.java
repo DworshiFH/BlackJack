@@ -9,11 +9,20 @@ public class Card {
     private String ID;
     private int value;
     private ImageView imageView;
+    private boolean isAs;
 
     public Card(String ID, int value){
         this.ID = ID;
         this.value = value;
         this.imageView =null;
+        this.isAs=false;
+    }
+
+    public Card(String ID, int value, boolean isAs) {
+        this.ID = ID;
+        this.value = value;
+        this.imageView = null;
+        this.isAs = isAs;
     }
 
     public ImageView getImageView() {
@@ -38,6 +47,10 @@ public class Card {
 
     public String getID() {
         return ID;
+    }
+
+    public boolean getIsAce() {
+        return isAs;
     }
 
     public void setImage(Image image) {

@@ -1,6 +1,5 @@
 package at.ac.fhcampuswien;
 
-
 import at.ac.fhcampuswien.Objects.Card;
 import at.ac.fhcampuswien.Objects.Dealer;
 import at.ac.fhcampuswien.Objects.Player;
@@ -17,8 +16,10 @@ public class GameMethods {
             deck.remove(0);
             card=deck.get(0);
         }
-        card.setImageView(AppController.CardTextureAssigner(card, player.getHoldingCards().size(),false));
-        player.addCard(card);
+
+        Card addCard=new Card(card.getID(), card.getValue(), card.getIsAce());
+        addCard.setImageView(AppController.CardTextureAssigner(card, player.getHoldingCards().size(),false));
+        player.addCard(addCard); //make new Card object, to be able to change card values, without affecting the whole deck.
         deck.remove(0);
     }
 
@@ -52,6 +53,7 @@ public class GameMethods {
 
         Player ret = new Player(player.getPlayerName() + "Split", player.getStake());
         ret.setStake(player.getStake());
+        player.removeBalance(player.getStake());
 
         ret.addCard(new Card(player.getCard(1).getID(),player.getCard(1).getValue()));
 
@@ -90,13 +92,17 @@ public class GameMethods {
 
     public static boolean Win(Player player, Dealer dealer){
         boolean ret;
+        int PcardValue=0;
 
         if(DealerHasOverdrawn(dealer)){
             ret=true;
         }else{
-            int PcardValue=PlayerValueCalculator(player);
+            PcardValue=PlayerValueCalculator(player);
             int DcardValue=DealerValueCalculator(dealer);
             ret= PcardValue > DcardValue;
+        }
+        if(PcardValue>21){
+            ret=false;
         }
 
         return ret;
@@ -111,13 +117,16 @@ public class GameMethods {
 
     public static boolean Lost(Player player, Dealer dealer){
         boolean ret;
+        int PcardValue=0;
         if(PlayerHasOverdrawn(player)){
             ret=true;
         }else{
-            int PcardValue=PlayerValueCalculator(player);
+            PcardValue=PlayerValueCalculator(player);
             int DcardValue=DealerValueCalculator(dealer);
             ret= PcardValue < DcardValue;
         }
+        if(PcardValue>21) ret = true;
+
         return ret;
     }
 
@@ -159,16 +168,18 @@ public class GameMethods {
             PcardValue+=player.getHoldingCards().get(i).getValue();
         }
         if(PcardValue>21){
-            for(int i=0; i<player.getHoldingCards().size();i++){ //checks for As
+            for(int i=0; i<player.getHoldingCards().size();i++){ //checks for Ace
                 if(player.getHoldingCards().get(i).getValue()==11){
                     player.getHoldingCards().get(i).setValue(1);
-                    for(int j=0; j<player.getHoldingCards().size();j++){
-                        PcardValue+=player.getHoldingCards().get(j).getValue();
-                    }
                     break;
                 }
             }
+            PcardValue=0;
+            for(int j=0; j<player.getHoldingCards().size();j++){
+                PcardValue+=player.getHoldingCards().get(j).getValue();
+            }
         }
+
         return PcardValue;
     }
     public static int DealerValueCalculator(Dealer dealer){
@@ -177,126 +188,17 @@ public class GameMethods {
             DcardValue+=dealer.getHoldingCards().get(i).getValue();
         }
         if(DcardValue>21){
-            for(int i=0; i<dealer.getHoldingCards().size();i++){ //checks for As
+            for(int i=0; i<dealer.getHoldingCards().size();i++){ //checks for Ace
                 if(dealer.getHoldingCards().get(i).getValue()==11){
                     dealer.getHoldingCards().get(i).setValue(1);
-                    for(int j=0; j<dealer.getHoldingCards().size();j++){
-                        DcardValue+=dealer.getHoldingCards().get(j).getValue();
-                    }
                     break;
                 }
+            }
+            DcardValue=0;
+            for(int j=0; j<dealer.getHoldingCards().size();j++){
+                DcardValue+=dealer.getHoldingCards().get(j).getValue();
             }
         }
         return DcardValue;
     }
 }
-
-
-
-
-
-
-/*    public static void main(String[] args){
-
-        boolean playing=true;
-        boolean isBlackJack=false;
-
-        boolean push=false;
-        boolean talonFound=false;
-
-
-        boolean win=false;
-        boolean lost=false;
-
-
-
-        List<Card> deck = new ArrayList<>();
-        deck=Deck.makeDeck();
-
-        Dealer dealer=new Dealer();
-
-        Player player1=new Player("Kurti",1000);
-        //Player player2=new Player("Hansi",1000);
-
-        do{
-            if(hasTalon){
-                deck=Deck.makeDeck();
-                hasTalon=false;
-            }
-
-            //set your Stakes;
-            setStake(player1);
-
-            //Dealer and Players get Cards
-            giveCardToPlayer(player1, deck);
-
-            //get Texture out of Card-Object and make ImageView out of it
-
-            giveCardToDealer(dealer, deck);
-            giveCardToPlayer(player1, deck);
-            giveCardToDealer(dealer, deck);
-
-            //check for BlackJack
-            if(player1.getCard(0).getValue()==11 && player1.getCard(1).getValue()==10){
-                BlackJack(player1, dealer);
-                continue;
-            }else if(player1.getCard(1).getValue()==11 && player1.getCard(0).getValue()==10){
-                BlackJack(player1, dealer);
-                continue;
-            }
-
-            //check for possibility of Hit Split Double Down
-
-            int dealerCardValue=0;
-            for(int i=0; i<dealer.getHoldingCards().size();i++){
-                dealerCardValue+=dealer.getHoldingCards().get(i).getValue();
-            }
-
-            do{
-                giveCardToDealer(dealer, deck);
-                dealerCardValue+=dealer.getHoldingCards().get(dealer.getHoldingCards().size()-1).getValue();
-
-            }while(dealerCardValue<17);
-            win=win(player1,dealer);
-            lost=lost(player1, dealer);
-            push=push(player1,dealer);
-            if(win){
-                winPayout(player1,dealer);
-                continue;
-            }
-            if(lost){
-                lostPayout(player1, dealer);
-                continue;
-            }
-            if(push){
-                pushPayout(player1,dealer);
-                continue;
-            }
-            if(endGame()){
-                player1.setStake(0);
-                player1.clearHoldingCards();
-                break;
-            }
-
-        }while (playing);
-
-        System.out.println("Thank you for Playing");
-
-
-
-
-
-
-
-
-
-
-
-
-
-    }*/
-
-
-
-
-

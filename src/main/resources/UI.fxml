@@ -5,8 +5,15 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="667.0" prefWidth="926.0" style="-fx-background-color: green;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="at.ac.fhcampuswien.AppController">
    <children>
+
       <Button fx:id="hitButton" disable="true" layoutX="828.0" layoutY="325.0" mnemonicParsing="false" onAction="#Hit" text="Hit" />
       <Button fx:id="splitButton" disable="true" layoutX="868.0" layoutY="324.0" mnemonicParsing="false" onAction="#Split" text="Split" />
+      <Button fx:id="surrenderButton" layoutX="739.0" layoutY="362.0" mnemonicParsing="false" onAction="#Surrender" text="Surrender" />
+
+      <Button fx:id="hitButtonSplit" disable="true" layoutX="828.0" layoutY="325.0" mnemonicParsing="false" onAction="#SplitHit" text="Hit" visible="false" />
+      <Button fx:id="doubleDownButtonSplit" disable="true" layoutX="818.0" layoutY="362.0" mnemonicParsing="false" onAction="#SplitDoubleDown" text="Double Down" visible="false" />
+      <Button fx:id="surrenderButtonSplit" layoutX="739.0" layoutY="362.0" mnemonicParsing="false" onAction="#SplitSurrender" text="Surrender" visible="false" />
+
       <Button fx:id="doubleDownButton" disable="true" layoutX="818.0" layoutY="362.0" mnemonicParsing="false" onAction="#DoubleDown" text="Double Down" />
       <Button fx:id="standButton" disable="true" layoutX="773.0" layoutY="325.0" mnemonicParsing="false" onAction="#Stand" text="Stand" />
       <Pane fx:id="playerPane" layoutX="14.0" layoutY="407.0" prefHeight="247.0" prefWidth="901.0" style="-fx-border-color: white;">
@@ -25,9 +32,8 @@
       <Pane prefHeight="200.0" prefWidth="200.0" />
       <TextField fx:id="dealerValueWindow" editable="false" layoutX="22.0" layoutY="31.0" />
       <TextField fx:id="splitValueWindow" editable="false" layoutX="761.0" layoutY="413.0" />
-      <Button fx:id="handSelectButton" layoutX="433.0" layoutY="638.0" mnemonicParsing="false" onAction="#HandSelector" text="Select Hand" />
-      <TextField fx:id="showSelectedHand" editable="false" layoutX="397.0" layoutY="612.0" text="       Selected Hand     -&gt;" />
+      <Button fx:id="handSelectButton" layoutX="190.0" layoutY="642.0" mnemonicParsing="false" onAction="#HandSelector" text="Select Hand" />
+      <TextField fx:id="showSelectedHand" editable="false" layoutX="270.0" layoutY="642.0" text="&lt;-     Selected Hand" />
       <TextField fx:id="playerValueWindow" editable="false" layoutX="19.0" layoutY="413.0" />
-      <Button fx:id="surrenderButton" layoutX="739.0" layoutY="362.0" mnemonicParsing="false" onAction="#Surrender" text="Surrender" />
    </children>
 </Pane>

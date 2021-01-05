@@ -28,7 +28,7 @@ public class Deck{
     static Card KA_J = new Card("KA_J",10);
     static Card KA_D = new Card("KA_D",10);
     static Card KA_K = new Card("KA_K",10);
-    static Card KA_A = new Card("KA_A",11);
+    static Card KA_A = new Card("KA_A",11,true);
 
     //Pick
     static Card PI_2 = new Card("PI_2",2);
@@ -43,7 +43,7 @@ public class Deck{
     static Card PI_J = new Card("PI_J",10);
     static Card PI_D = new Card("PI_D",10);
     static Card PI_K = new Card("PI_K",10);
-    static Card PI_A = new Card("PI_A",11);
+    static Card PI_A = new Card("PI_A",11,true);
 
     //Kreuz
     static Card KR_2 = new Card("KR_2",2);
@@ -58,7 +58,7 @@ public class Deck{
     static Card KR_J = new Card("KR_J",10);
     static Card KR_D = new Card("KR_D",10);
     static Card KR_K = new Card("KR_K",10);
-    static Card KR_A = new Card("KR_A",11);
+    static Card KR_A = new Card("KR_A",11,true);
 
     //Herz
     static Card HE_2 = new Card("HE_2",2);
@@ -73,7 +73,7 @@ public class Deck{
     static Card HE_J = new Card("HE_J",10);
     static Card HE_D = new Card("HE_D",10);
     static Card HE_K = new Card("HE_K",10);
-    static Card HE_A = new Card("HE_A",11);
+    static Card HE_A = new Card("HE_A",11,true);
 
     static Card talon = new Card("Talon", 0);
 
@@ -152,12 +152,19 @@ public class Deck{
         deck.add(x, talon);
 
         //for testing purposes only
-        /*deck.add(2, HE_A);
-        deck.add(3,PI_A);
-        deck.add(4,PI_3);*/
+        deck.add(0, HE_A);
+        deck.add(1,PI_A);
+        //deck.add(4,PI_3);
 
 
         return deck;
+    }
+
+    public static void resetAces(){
+        KA_A.setValue(11);
+        PI_A.setValue(11);
+        KR_A.setValue(11);
+        HE_A.setValue(11);
     }
 
 }

@@ -33,8 +33,6 @@ public class AppController {
     @FXML
     public Button splitButton;
     @FXML
-    public Button doubleDownButton;
-    @FXML
     public Button standButton;
     @FXML
     public TextField showBalance;
@@ -48,6 +46,14 @@ public class AppController {
     public TextField showSelectedHand;
     @FXML
     public Button surrenderButton;
+    @FXML
+    public Button doubleDownButton;
+    @FXML
+    public Button hitButtonSplit;
+    @FXML
+    public Button doubleDownButtonSplit;
+    @FXML
+    public Button surrenderButtonSplit;
     @FXML
     private Pane mainPane;
     @FXML
@@ -65,8 +71,14 @@ public class AppController {
     private boolean push;
     private boolean talonFound;
     private boolean win;
-    private boolean rightHandSelected;
+    private boolean leftHandSelected;
     private boolean talonShow;
+    private boolean splitActive;
+    private boolean leftHandHasHit;
+    private boolean rightHandHasHit;
+    private boolean rightHandSelected;
+    private boolean rightHandAlreadyLost;
+    private boolean leftHandAlreadyLost;
 
     private boolean showFullDealerValue;
 
@@ -90,9 +102,12 @@ public class AppController {
             GameMethods.ResetTalon();
         }
 
+
         //clears PlayingField
         playerPane.getChildren().clear();
         dealerPane.getChildren().clear();
+
+        Deck.resetAces();
 
         newRoundButton.setVisible(false);
         setBetButton.setDisable(false);
@@ -106,6 +121,7 @@ public class AppController {
         showBalance.setText("Your Balance: "+ player.getBalance());
 
         numOfCardsDealer=0;
+
         splitPlayer=null;
 
         isBlackJack=false;
@@ -114,9 +130,25 @@ public class AppController {
         win=false;
         lost=false;
         showFullDealerValue=false;
-        rightHandSelected = true;
+        leftHandSelected = true;
+        rightHandSelected = false;
+        splitActive=false;
+        leftHandHasHit=false;
+        rightHandHasHit=false;
+        isFistSplitCard=true;
+        leftHandAlreadyLost =false;
+        rightHandAlreadyLost =false;
+
+        hitButton.setVisible(true);
+        surrenderButton.setVisible(true);
+        doubleDownButton.setVisible(true);
+
         handSelectButton.setVisible(false);
         showSelectedHand.setVisible(false);
+
+        hitButtonSplit.setVisible(false);
+        surrenderButtonSplit.setVisible(false);
+        doubleDownButtonSplit.setVisible(false);
 
         playerValueWindow.setText("Card Value: ");
         dealerValueWindow.setText("Card Value: ");
@@ -174,22 +206,26 @@ public class AppController {
             newRoundButton.setVisible(true);
         }else{
             //enables all Buttons, except Split Button
+            doubleDownButton.setDisable(false);
             hitButton.setDisable(false);
             splitButton.setDisable(true);
-            doubleDownButton.setDisable(false);
             standButton.setDisable(false);
             surrenderButton.setDisable(false);
         }
 
-        //Split is only possible if both cards are of same value
+        //Checks for possibility Split (Split is only possible if both cards are of same value)
         if(player.getCard(0).getValue()==player.getCard(1).getValue()){
             splitButton.setDisable(false);
+        }
+        if(player.getCard(0).getIsAce()){
+            if(player.getCard(1).getIsAce()){
+                splitButton.setDisable(false);
+            }
         }
 
         setBetButton.setDisable(true);
         showBalance.setText("Your Balance: "+ player.getBalance());
     }
-    private final String DealerValueWindowDefault = "Card Value: ";
 
     public void GenerateCardDealer() throws FileNotFoundException {
         talonFound=GameMethods.TalonFound();
@@ -203,9 +239,9 @@ public class AppController {
         dealerPane.getChildren().add(dealer.getHoldingCards().get(dealer.getHoldingCards().size()-1).getImageView());
 
         if(showFullDealerValue){
-            dealerValueWindow.setText(DealerValueWindowDefault + DcardValue);
+            dealerValueWindow.setText("Card Value: " + DcardValue);
         }else{
-            dealerValueWindow.setText(DealerValueWindowDefault + dealer.getHoldingCards().get(0).getValue());
+            dealerValueWindow.setText("Card Value: " + dealer.getHoldingCards().get(0).getValue());
         }
 
         if(dealer.getHoldingCards().size()==3){
@@ -228,13 +264,21 @@ public class AppController {
                 ShowTalon();
             talonShow=false;
         }
+
         int PlayerCardValue=GameMethods.PlayerValueCalculator(player);
 
-        playerPane.getChildren().add(player.getHoldingCards().get(player.getHoldingCards().size()-1).getImageView());
+        ImageView show=player.getHoldingCards().get(player.getHoldingCards().size()-1).getImageView();
+
+        if(splitActive){
+            show.setLayoutX(show.getLayoutX()-(player.getHoldingCards().size()-1)*60);
+        }
+
+        playerPane.getChildren().add(show);
 
         playerValueWindow.setText("Card Value: " + PlayerCardValue);
     }
 
+    boolean isFistSplitCard=true;
     public void GenerateCardSplit() throws FileNotFoundException {
         talonFound=GameMethods.TalonFound();
         if(talonFound){
@@ -242,15 +286,15 @@ public class AppController {
                 ShowTalon();
             talonShow=false;
         }
-        int PlayerCardValue=GameMethods.PlayerValueCalculator(splitPlayer);
+        int SplitCardValue=GameMethods.PlayerValueCalculator(splitPlayer);
 
         ImageView show = splitPlayer.getHoldingCards().get(splitPlayer.getHoldingCards().size()-1).getImageView();
 
-        show.setLayoutX(560+offset);
+        show.setLayoutX(500+55*(splitPlayer.getHoldingCards().size()-2)); //560
 
         playerPane.getChildren().add(show);
 
-        splitValueWindow.setText("Card Value Split: " + PlayerCardValue);
+        splitValueWindow.setText("Card Value Split: " + SplitCardValue);
     }
 
 
@@ -271,6 +315,7 @@ public class AppController {
 
     public void DealerDraws() throws FileNotFoundException {
         showFullDealerValue =true;
+        terminal.clear();
 
         int dealerCardValue=GameMethods.DealerValueCalculator(dealer);
         if(dealerCardValue<17){
@@ -285,8 +330,11 @@ public class AppController {
         push=GameMethods.Push(player,dealer);
         lost=GameMethods.Lost(player,dealer);
         if(win){
-            terminal.clear();
-            terminal.setText("Won!");
+            if(splitActive && !rightHandAlreadyLost){
+                terminal.setText("Left Hand Won!");
+            }else{
+                terminal.setText("Won!");
+            }
             if(GameMethods.DealerHasOverdrawn(dealer)){
                 terminal.appendText("\nDealer has overdrawn.");
             }
@@ -296,78 +344,193 @@ public class AppController {
             MakeDealerCardsVisible();
             newRoundButton.setVisible(true);
         }else if(push){
-            terminal.clear();
-            terminal.setText("Push!");
+            if(splitActive){
+                terminal.setText("Left Hand Push!");
+            }else{
+                terminal.setText("Push!");
+            }
             GameMethods.PushPayout(player);
             setBetButton.setDisable(true);
             ShowDealerValue();
             MakeDealerCardsVisible();
             newRoundButton.setVisible(true);
         }else if(lost){
-            terminal.clear();
-            terminal.setText("Lost!");
+            if(splitActive){
+                terminal.setText("Left Hand Lost!");
+            }else{
+                terminal.setText("Lost!");
+            }
             GameMethods.LostPayout(player);
             setBetButton.setDisable(true);
             ShowDealerValue();
             MakeDealerCardsVisible();
             newRoundButton.setVisible(true);
         }
+
+        //for Split
+        if(!rightHandAlreadyLost){
+            win=GameMethods.Win(splitPlayer,dealer);
+            push=GameMethods.Push(splitPlayer,dealer);
+            lost=GameMethods.Lost(splitPlayer,dealer);
+            if(win){
+                terminal.appendText("\nRight Hand Won!");
+                player.addBalance(splitPlayer.getStake()*2);
+                setBetButton.setDisable(true);
+                ShowDealerValue();
+                MakeDealerCardsVisible();
+                newRoundButton.setVisible(true);
+            }else if(push){
+                terminal.appendText("\nRight Hand Push!");
+                player.addBalance(splitPlayer.getBalance());
+                setBetButton.setDisable(true);
+                ShowDealerValue();
+                MakeDealerCardsVisible();
+                newRoundButton.setVisible(true);
+            }else if(lost){
+                terminal.appendText("\nRight Hand Lost!");
+                setBetButton.setDisable(true);
+                ShowDealerValue();
+                MakeDealerCardsVisible();
+                newRoundButton.setVisible(true);
+            }
+        }
     }
 
+
     public void Hit() throws FileNotFoundException {
-        doubleDownButton.setDisable(true);
         splitButton.setDisable(true);
         surrenderButton.setDisable(true);
+        doubleDownButton.setDisable(true);
 
-        //if(!rightHandSelected) {
-            GameMethods.GiveCardToPlayer(player, deck);
-            GenerateCardPlayer();
+        leftHandHasHit=true;
 
-            if (GameMethods.PlayerHasOverdrawn(player)) {
-                terminal.clear();
-                terminal.setText("Bust!");
-                GameMethods.LostPayout(player);
-                setBetButton.setDisable(true);
-                newRoundButton.setVisible(true);
+        GameMethods.GiveCardToPlayer(player, deck);
+        GenerateCardPlayer();
+
+        if (GameMethods.PlayerHasOverdrawn(player) && !splitActive) {
+            terminal.clear();
+            terminal.setText("Bust!");
+
+            GameMethods.LostPayout(player);
+            setBetButton.setDisable(true);
+            newRoundButton.setVisible(true);
+            if(splitActive){
+                HandSelector();
+                handSelectButton.setDisable(true);
+            }else{
                 DisableButtons();
             }
-        //}
+        }else if(GameMethods.PlayerHasOverdrawn(player) && splitActive){
+            terminal.clear();
+            terminal.setText("Left Hand Bust!");
+            GameMethods.LostPayout(player);
+            HandSelector();
+            handSelectButton.setDisable(true);
+            player.clearHoldingCards();
+            leftHandAlreadyLost =true;
+        }
+        if(leftHandAlreadyLost && rightHandAlreadyLost){
+            standButton.setDisable(true);
+            DisableButtons();
+            hitButtonSplit.setVisible(false);
+            doubleDownButtonSplit.setVisible(false);
+            surrenderButtonSplit.setVisible(false);
+            newRoundButton.setVisible(true);
+            terminal.appendText("\nLost!");
+        }
     }
 
     public void SplitHit() throws FileNotFoundException {
+        surrenderButtonSplit.setDisable(true);
+        doubleDownButtonSplit.setDisable(true);
 
         GameMethods.GiveCardToPlayer(splitPlayer, deck);
         GenerateCardSplit();
 
+        rightHandHasHit=true;
+
         if (GameMethods.PlayerHasOverdrawn(splitPlayer)) {
             terminal.clear();
-            terminal.setText("Bust!");
+            terminal.setText("Right Hand Bust!");
             GameMethods.LostPayout(splitPlayer);
             setBetButton.setDisable(true);
             newRoundButton.setVisible(false);
+            HandSelector();
+            handSelectButton.setDisable(true);
+            splitPlayer.clearHoldingCards();
+            splitValueWindow.setText("Card Value: ");
+            rightHandAlreadyLost =true;
+        }
+        if(leftHandAlreadyLost && rightHandAlreadyLost){
+            standButton.setDisable(true);
+            DisableButtons();
+            hitButtonSplit.setVisible(false);
+            doubleDownButtonSplit.setVisible(false);
+            surrenderButtonSplit.setVisible(false);
+            newRoundButton.setVisible(true);
+            hitButton.setVisible(true);
+            doubleDownButton.setVisible(true);
+            surrenderButton.setVisible(true);
+            terminal.appendText("\nLost!");
         }
     }
 
     public void DisableButtons(){
         hitButton.setDisable(true);
         splitButton.setDisable(true);
-        doubleDownButton.setDisable(true);
         standButton.setDisable(true);
+        doubleDownButton.setDisable(true);
         surrenderButton.setDisable(true);
     }
 
 
     public void HandSelector(){
-        if(!rightHandSelected){
-            showSelectedHand.setText("       Selected Hand     ->");
-        }else{
+        leftHandSelected = !leftHandSelected;
+        rightHandSelected = !rightHandSelected;
+
+        if(leftHandSelected){
             showSelectedHand.setText("<-     Selected Hand");
         }
-        rightHandSelected = !rightHandSelected;
+        if(rightHandSelected){
+            showSelectedHand.setText("       Selected Hand     ->");
+        }
+
+        if(leftHandSelected){
+            doubleDownButtonSplit.setVisible(false);
+            hitButtonSplit.setVisible(false);
+            surrenderButtonSplit.setVisible(false);
+
+            doubleDownButton.setVisible(true);
+            hitButton.setVisible(true);
+            surrenderButton.setVisible(true);
+
+            if(leftHandHasHit){
+                doubleDownButton.setDisable(true);
+                surrenderButton.setDisable(true);
+            }
+        }
+
+        if(rightHandSelected){
+            doubleDownButton.setVisible(false);
+            hitButton.setVisible(false);
+            surrenderButton.setVisible(false);
+
+            doubleDownButtonSplit.setVisible(true);
+            hitButtonSplit.setVisible(true);
+            surrenderButtonSplit.setVisible(true);
+
+            if(rightHandHasHit){
+                doubleDownButtonSplit.setDisable(true);
+                surrenderButtonSplit.setDisable(true);
+            }
+        }
     }
 
-    private final int splitOffset=400;
     public void Split() throws FileNotFoundException {
+        boolean isBlackjackSplit=false;
+        splitActive=true;
+
+        splitButton.setDisable(true);
 
         talonFound=GameMethods.TalonFound();
         if(talonFound){
@@ -380,9 +543,20 @@ public class AppController {
         handSelectButton.setVisible(true);
         showSelectedHand.setVisible(true);
 
-        player.getCard(1).setImageViewX(player.getCard(1).getImageView().getLayoutX()+splitOffset);
+        hitButtonSplit.setDisable(false);
+        doubleDownButtonSplit.setDisable(false);
+        surrenderButtonSplit.setDisable(false);
+        handSelectButton.setDisable(false);
+
+        player.getCard(1).setImageViewX(player.getCard(1).getImageView().getLayoutX()+290);
 
         splitPlayer=GameMethods.Split(player, deck);
+        showBalance.setText("Your Balance: "+player.getBalance());
+        terminal.appendText("\nSplit Bet: "+splitPlayer.getStake());
+
+        //sets Value of Aces back to originial
+        if(player.getCard(0).getIsAce()) player.getCard(0).setValue(11);
+        if(splitPlayer.getCard(0).getIsAce()) splitPlayer.getCard(0).setValue(11);
 
         GameMethods.GiveCardToPlayer(player,deck);
         GenerateCardPlayer();
@@ -400,58 +574,101 @@ public class AppController {
                 splitPlayer.getCard(splitPlayer.getHoldingCards().size()-1).getImageView().getLayoutX()+  splitOffset);*/
 
         splitValueWindow.setText("Card Value: " + splitCardValue);
+
+        //checks for Blackjack for Split
+        if(splitPlayer.getCard(0).getValue()==11 && splitPlayer.getCard(1).getValue()==10){
+            isBlackjackSplit=true;
+        }else if(splitPlayer.getCard(1).getValue()==11 && splitPlayer.getCard(0).getValue()==10) {
+            isBlackjackSplit=true;
+        }
+        if(isBlackjackSplit){
+            ShowDealerValue();
+            terminal.clear();
+            terminal.setText("Right Hand BlackJack!");
+            hitButtonSplit.setDisable(true);
+            doubleDownButtonSplit.setDisable(true);
+            surrenderButtonSplit.setDisable(true);
+            player.addBalance(splitPlayer.getStake()*2.5);
+            splitPlayer.clearHoldingCards();
+            showBalance.setText("Your Blance: "+player.getBalance());
+            rightHandAlreadyLost =true;
+        }
+
+        //checks for Blackjack
+        if(player.getCard(0).getValue()==11 && player.getCard(1).getValue()==10){
+            isBlackJack=true;
+        }else if(player.getCard(1).getValue()==11 && player.getCard(0).getValue()==10) {
+            isBlackJack=true;
+        }
+        if(isBlackJack){
+            DisableButtons();
+            standButton.setDisable(false);
+            ShowDealerValue();
+            terminal.clear();
+            terminal.setText("Left Hand BlackJack!");
+            setBetButton.setDisable(true);
+            MakeDealerCardsVisible();
+            GameMethods.BlackJackPayout(player);
+            showBalance.setText("Your Blance: "+player.getBalance());
+            leftHandAlreadyLost =true;
+        }
+
+        if(isBlackjackSplit&&isBlackJack){
+            terminal.setText("Both Hands BlackJack!!");
+            standButton.setDisable(true);
+            GameMethods.BlackJackPayout(player);
+            newRoundButton.setVisible(true);
+        }
+
         GenerateCardSplit();
 
         GenerateCardPlayer();
-        splitButton.setDisable(true);
     }
 
     public void DoubleDown() throws FileNotFoundException {
-        if (player.getHoldingCards().size() == 2) {
-                GameMethods.DoubleDown(player, deck);
-                GenerateCardPlayer();
-                //rotates the card by 90°
-                player.getHoldingCards().get(player.getHoldingCards().size() - 1).getImageView().setRotate(90);
-                lost = GameMethods.Lost(player, dealer);
-                showBalance.setText("Your Balance: " + player.getBalance());
 
-                if (GameMethods.PlayerHasOverdrawn(player)) {
-                    terminal.clear();
-                    terminal.setText("You have Overdrawn!");
-                    ShowDealerValue();
-                    GameMethods.LostPayout(player);
-                    setBetButton.setDisable(true);
-                    newRoundButton.setVisible(true);
-                } else {
-                    doubleDownButton.setDisable(true);
-                    splitButton.setDisable(true);
-                    Stand();
-                    }
-                }
-            //dealer draws Cards
+        DisableButtons();
+
+        GameMethods.DoubleDown(player, deck);
+        GenerateCardPlayer();
+        //rotates the card by 90°
+        player.getHoldingCards().get(player.getHoldingCards().size() - 1).getImageView().setRotate(90);
+        lost = GameMethods.Lost(player, dealer);
+        showBalance.setText("Your Balance: " + player.getBalance());
+
+        if (GameMethods.PlayerHasOverdrawn(player)) {
+            terminal.clear();
+            terminal.setText("You have Overdrawn!");
+            ShowDealerValue();
+            GameMethods.LostPayout(player);
+            setBetButton.setDisable(true);
+            if(!splitActive) newRoundButton.setVisible(true);
+        } else {
+            if(!splitActive) Stand();
         }
+
+    }
 
     public void SplitDoubleDown() throws FileNotFoundException {
-        if (splitPlayer.getHoldingCards().size() == 2) {
-            GameMethods.DoubleDown(splitPlayer, deck);
-            GenerateCardSplit();
-            //rotates the card by 90°
-            splitPlayer.getHoldingCards().get(splitPlayer.getHoldingCards().size() - 1).getImageView().setRotate(90);
-            lost = GameMethods.Lost(splitPlayer, dealer);
-            showBalance.setText("Your Balance: " + player.getBalance());
 
-            if (GameMethods.PlayerHasOverdrawn(splitPlayer)) {
-                terminal.clear();
-                terminal.setText("You have Overdrawn!");
-                GameMethods.LostPayout(player);
-                setBetButton.setDisable(true);
-                newRoundButton.setVisible(false);
-            } else {
-                splitButton.setDisable(true);
-                SplitStand();
-            }
+        doubleDownButtonSplit.setDisable(true);
+        hitButtonSplit.setDisable(true);
+        surrenderButton.setDisable(true);
+
+        GameMethods.DoubleDown(splitPlayer, deck);
+        GenerateCardSplit();
+        //rotates the card by 90°
+        splitPlayer.getHoldingCards().get(splitPlayer.getHoldingCards().size() - 1).getImageView().setRotate(90);
+        lost = GameMethods.Lost(splitPlayer, dealer);
+        showBalance.setText("Your Balance: " + player.getBalance());
+
+        if (GameMethods.PlayerHasOverdrawn(splitPlayer)) {
+            terminal.clear();
+            terminal.setText("Right Hand has Overdrawn!");
+            GameMethods.LostPayout(player);
+            setBetButton.setDisable(true);
+            newRoundButton.setVisible(false);
         }
-        //dealer draws Cards
     }
 
     public void Stand() throws FileNotFoundException {
@@ -472,24 +689,35 @@ public class AppController {
 
     public void Surrender(){
         DisableButtons();
-        terminal.clear();
-        terminal.setText("Surrendered!");
         GameMethods.SurrenderPayout(player);
-        newRoundButton.setVisible(true);
+        if(!splitActive){
+            terminal.clear();
+            newRoundButton.setVisible(true);
+            terminal.setText("Surrendered!");
+        }else{
+            terminal.appendText("\nSurrendered!");
+            standButton.setDisable(false);
+        }
+        leftHandAlreadyLost=true;
+        if(rightHandAlreadyLost) newRoundButton.setVisible(true);
     }
 
     public void SplitSurrender() throws FileNotFoundException {
-        GameMethods.SurrenderPayout(player);
-        newRoundButton.setVisible(false);
-        SplitStand();
+        terminal.appendText("\nSurrendered!");
+        splitPlayer.setStake(0);
+        player.addBalance(splitPlayer.getBalance()*0.5);
+        HandSelector();
+        handSelectButton.setDisable(true);
+        rightHandAlreadyLost=true;
+        if(leftHandAlreadyLost) newRoundButton.setVisible(true);
     }
 
     public void ShowDealerValue(){
         int DcardValue=GameMethods.DealerValueCalculator(dealer);
-        dealerValueWindow.setText(DealerValueWindowDefault+ DcardValue);
+        dealerValueWindow.setText("Card Value: "+ DcardValue);
     }
 
-    private static final int offset = 110;
+    private static int offset = 110;
 
     public static ImageView CardTextureAssigner(Card card, int cardnum, boolean isDealer) { //true = Dealer
         int yOffset;
