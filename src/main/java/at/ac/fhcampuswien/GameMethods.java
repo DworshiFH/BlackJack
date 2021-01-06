@@ -8,6 +8,12 @@ import java.util.List;
 
 public class GameMethods {
     private static boolean hasTalon=false;
+    public static boolean TalonFound(){
+        return hasTalon;
+    }
+    public static void ResetTalon(){
+        hasTalon=false;
+    }
 
     public static void GiveCardToPlayer(Player player, List<Card> deck) {
         Card card=deck.get(0);
@@ -17,17 +23,10 @@ public class GameMethods {
             card=deck.get(0);
         }
 
-        Card addCard=new Card(card.getID(), card.getValue(), card.getIsAce());
-        addCard.setImageView(AppController.CardTextureAssigner(card, player.getHoldingCards().size(),false));
+        Card addCard=new Card(card);
+        addCard.setImageView(AppController.CardTextureAssigner(addCard, player.getHoldingCards().size(),false));
         player.addCard(addCard); //make new Card object, to be able to change card values, without affecting the whole deck.
         deck.remove(0);
-    }
-
-    public static boolean TalonFound(){
-        return hasTalon;
-    }
-    public static void ResetTalon(){
-        hasTalon=false;
     }
 
     public static void GiveCardToDealer(Dealer dealer, List<Card> deck) {
@@ -37,8 +36,9 @@ public class GameMethods {
             deck.remove(0);
             card=deck.get(0);
         }
-        card.setImageView(AppController.CardTextureAssigner(card, dealer.getHoldingCards().size(),true));
-        dealer.addCard(card);
+        Card addCard=new Card(card);
+        addCard.setImageView(AppController.CardTextureAssigner(addCard, dealer.getHoldingCards().size(),true));
+        dealer.addCard(addCard);
         deck.remove(0);
     }
 
@@ -47,11 +47,9 @@ public class GameMethods {
         player.removeBalance(amount);
     }
 
-
-    //implement Split
     public static Player Split(Player player, List<Card> deck) {
 
-        Player ret = new Player(player.getPlayerName() + "Split", player.getStake());
+        Player ret = new Player("playerSplit", player.getStake());
         ret.setStake(player.getStake());
         player.removeBalance(player.getStake());
 
@@ -86,15 +84,12 @@ public class GameMethods {
         player.addBalance(player.getStake()*0.5);
         player.setStake(0);
     }
-    public static void SplitPayout(Player split){
-
-    }
 
     public static boolean Win(Player player, Dealer dealer){
         boolean ret;
         int PcardValue=0;
 
-        if(DealerHasOverdrawn(dealer)){
+        if(DealerBust(dealer)){
             ret=true;
         }else{
             PcardValue=PlayerValueCalculator(player);
@@ -107,6 +102,7 @@ public class GameMethods {
 
         return ret;
     }
+
     public static boolean Push(Player player, Dealer dealer){
         boolean ret;
         int PcardValue=PlayerValueCalculator(player);
@@ -118,7 +114,7 @@ public class GameMethods {
     public static boolean Lost(Player player, Dealer dealer){
         boolean ret;
         int PcardValue=0;
-        if(PlayerHasOverdrawn(player)){
+        if(PlayerBust(player)){
             ret=true;
         }else{
             PcardValue=PlayerValueCalculator(player);
@@ -130,7 +126,7 @@ public class GameMethods {
         return ret;
     }
 
-    public static boolean PlayerHasOverdrawn(Player player){
+    public static boolean PlayerBust(Player player){
         boolean ret;
         int PcardValue=0;
         for(int i=0; i<player.getHoldingCards().size();i++){
@@ -152,7 +148,8 @@ public class GameMethods {
         }
         return ret;
     }
-    public static boolean DealerHasOverdrawn(Dealer dealer){
+
+    public static boolean DealerBust(Dealer dealer){
         boolean ret = false;
         int DcardValue=DealerValueCalculator(dealer);
         if(DcardValue > 21){
@@ -160,7 +157,6 @@ public class GameMethods {
         }
         return ret;
     }
-
 
     public static int PlayerValueCalculator(Player player){
         int PcardValue=0;
@@ -182,6 +178,7 @@ public class GameMethods {
 
         return PcardValue;
     }
+
     public static int DealerValueCalculator(Dealer dealer){
         int DcardValue=0;
         for(int i=0; i<dealer.getHoldingCards().size();i++){

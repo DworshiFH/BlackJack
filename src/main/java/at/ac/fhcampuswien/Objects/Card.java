@@ -9,20 +9,27 @@ public class Card {
     private String ID;
     private int value;
     private ImageView imageView;
-    private boolean isAs;
+    private boolean isAce;
 
     public Card(String ID, int value){
         this.ID = ID;
         this.value = value;
         this.imageView =null;
-        this.isAs=false;
+        this.isAce =false;
     }
 
-    public Card(String ID, int value, boolean isAs) {
+    public Card(String ID, int value, boolean isAce) {
         this.ID = ID;
         this.value = value;
         this.imageView = null;
-        this.isAs = isAs;
+        this.isAce = isAce;
+    }
+
+    public Card(Card card){
+        this.ID= card.getID();
+        this.value= card.getValue();
+        this.imageView= card.getImageView();
+        this.isAce = card.getIsAce();
     }
 
     public ImageView getImageView() {
@@ -50,7 +57,7 @@ public class Card {
     }
 
     public boolean getIsAce() {
-        return isAs;
+        return isAce;
     }
 
     public void setImage(Image image) {

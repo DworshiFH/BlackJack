@@ -11,10 +11,6 @@ public class Deck{
 
     //6 sets of Cards
 
-    //implement shuffle method
-
-    //implement pull card method
-
     //Karo
     static Card KA_2 = new Card("KA_2",2);
     static Card KA_3 = new Card("KA_3",3);
@@ -160,11 +156,11 @@ public class Deck{
         return deck;
     }
 
-    public static void resetAces(){
+    /*public static void resetAces(){
         KA_A.setValue(11);
         PI_A.setValue(11);
         KR_A.setValue(11);
         HE_A.setValue(11);
-    }
+    }*/
 
 }
