@@ -19,7 +19,7 @@ public class Game extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        Group ui = FXMLLoader.load(getClass().getResource("alteVersionen/UI_preSave.fxml"));
+        Group ui = FXMLLoader.load(getClass().getResource("alteVersionen/UI_withSave.fxml"));
 
         primaryStage.setTitle("Blackjack");
         Button btn = new Button();

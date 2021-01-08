@@ -1,8 +1,6 @@
 package at.ac.fhcampuswien;
 
-import at.ac.fhcampuswien.Objects.Card;
-import at.ac.fhcampuswien.Objects.Dealer;
-import at.ac.fhcampuswien.Objects.Player;
+import at.ac.fhcampuswien.Objects.*;
 
 import java.util.List;
 
@@ -89,11 +87,11 @@ public class GameMethods {
         boolean ret;
         int PcardValue=0;
 
-        if(DealerBust(dealer)){
+        if(BustCalculator(dealer)){
             ret=true;
         }else{
-            PcardValue=PlayerValueCalculator(player);
-            int DcardValue=DealerValueCalculator(dealer);
+            PcardValue= CardsValueCalculator(player);
+            int DcardValue=CardsValueCalculator(dealer);
             ret= PcardValue > DcardValue;
         }
         if(PcardValue>21){
@@ -105,8 +103,8 @@ public class GameMethods {
 
     public static boolean Push(Player player, Dealer dealer){
         boolean ret;
-        int PcardValue=PlayerValueCalculator(player);
-        int DcardValue=DealerValueCalculator(dealer);
+        int PcardValue= CardsValueCalculator(player);
+        int DcardValue=CardsValueCalculator(dealer);
         ret= PcardValue == DcardValue;
         return ret;
     }
@@ -114,11 +112,11 @@ public class GameMethods {
     public static boolean Lost(Player player, Dealer dealer){
         boolean ret;
         int PcardValue=0;
-        if(PlayerBust(player)){
+        if(BustCalculator(player)){
             ret=true;
         }else{
-            PcardValue=PlayerValueCalculator(player);
-            int DcardValue=DealerValueCalculator(dealer);
+            PcardValue= CardsValueCalculator(player);
+            int DcardValue=CardsValueCalculator(dealer);
             ret= PcardValue < DcardValue;
         }
         if(PcardValue>21) ret = true;
@@ -126,76 +124,33 @@ public class GameMethods {
         return ret;
     }
 
-    public static boolean PlayerBust(Player player){
-        boolean ret;
-        int PcardValue=0;
-        for(int i=0; i<player.getHoldingCards().size();i++){
-            PcardValue+=player.getHoldingCards().get(i).getValue();
-        }
-        if(PcardValue>21){
-            ret=true;
-            for(int i=0; i<player.getHoldingCards().size();i++){
-                if(player.getHoldingCards().get(i).getValue()==11){
-                    PcardValue-=10;
-                    ret=false;
-                }
-            }
-        }else{
-            ret=false;
-        }
-        if(PcardValue>21){
-            ret=true;
-        }
-        return ret;
-    }
-
-    public static boolean DealerBust(Dealer dealer){
+    public static boolean BustCalculator(Person person){
         boolean ret = false;
-        int DcardValue=DealerValueCalculator(dealer);
-        if(DcardValue > 21){
+        int CardValue=CardsValueCalculator(person);
+        if(CardValue > 21){
             ret = true;
         }
         return ret;
     }
 
-    public static int PlayerValueCalculator(Player player){
+    public static int CardsValueCalculator(Person person){
         int PcardValue=0;
-        for(int i=0; i<player.getHoldingCards().size();i++){
-            PcardValue+=player.getHoldingCards().get(i).getValue();
+        for(int i=0; i<person.getHoldingCards().size();i++){
+            PcardValue+=person.getHoldingCards().get(i).getValue();
         }
         if(PcardValue>21){
-            for(int i=0; i<player.getHoldingCards().size();i++){ //checks for Ace
-                if(player.getHoldingCards().get(i).getValue()==11){
-                    player.getHoldingCards().get(i).setValue(1);
+            for(int i=0; i<person.getHoldingCards().size();i++){ //checks for Ace
+                if(person.getHoldingCards().get(i).getValue()==11){
+                    person.getHoldingCards().get(i).setValue(1);
                     break;
                 }
             }
             PcardValue=0;
-            for(int j=0; j<player.getHoldingCards().size();j++){
-                PcardValue+=player.getHoldingCards().get(j).getValue();
+            for(int j=0; j<person.getHoldingCards().size();j++){
+                PcardValue+=person.getHoldingCards().get(j).getValue();
             }
         }
 
         return PcardValue;
-    }
-
-    public static int DealerValueCalculator(Dealer dealer){
-        int DcardValue=0;
-        for(int i=0; i<dealer.getHoldingCards().size();i++){
-            DcardValue+=dealer.getHoldingCards().get(i).getValue();
-        }
-        if(DcardValue>21){
-            for(int i=0; i<dealer.getHoldingCards().size();i++){ //checks for Ace
-                if(dealer.getHoldingCards().get(i).getValue()==11){
-                    dealer.getHoldingCards().get(i).setValue(1);
-                    break;
-                }
-            }
-            DcardValue=0;
-            for(int j=0; j<dealer.getHoldingCards().size();j++){
-                DcardValue+=dealer.getHoldingCards().get(j).getValue();
-            }
-        }
-        return DcardValue;
     }
 }

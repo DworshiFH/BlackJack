@@ -2,19 +2,13 @@ package at.ac.fhcampuswien.Objects;
 
 
 
-import java.util.ArrayList;
-import java.util.List;
+public class Player extends Person{
 
-public class Player {
-
-    private final List<Card> holdingCards;
-    private final String playerName;
     private double balance;
     private double stake;
 
     public Player(String playerName, double balance) {
-        this.holdingCards=new ArrayList<>();
-        this.playerName = playerName;
+        super(playerName);
         this.balance=balance;
         this.stake=0;
     }
@@ -29,25 +23,7 @@ public class Player {
         }
         this.stake = stake;
     }
-    public void addCard(Card card) {
-        this.holdingCards.add(card);
-    }
 
-    public void clearHoldingCards(){
-        this.holdingCards.clear();
-    }
-
-    public List<Card> getHoldingCards() {
-        return holdingCards;
-    }
-
-    public Card getCard(int index){
-        return this.holdingCards.get(index);
-    }
-
-    public String getPlayerName() {
-        return playerName;
-    }
 
     public double getBalance() {
         return balance;
@@ -61,7 +37,4 @@ public class Player {
         this.balance-=rem;
     }
 
-    public void removeCard(int index){
-        this.holdingCards.remove(index);
-    }
 }

@@ -148,8 +148,8 @@ public class Deck{
         deck.add(x, talon);
 
         //for testing purposes only
-        deck.add(0, HE_A);
-        deck.add(1,PI_A);
+        //deck.add(0, HE_A);
+        //deck.add(1,PI_A);
         //deck.add(4,PI_3);
 
 
