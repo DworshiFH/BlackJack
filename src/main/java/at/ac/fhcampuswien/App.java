@@ -9,19 +9,20 @@ import javafx.stage.Stage;
 public class App extends Application {
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("UI.fxml")); // only looks into /resources folder for files!
         Parent root = loader.load();
         AppController ctrl = loader.getController();  // get the controller instance of UI.fxml which is of type NotesController
 
-        stage.setOnCloseRequest(e -> {
+        primaryStage.setOnCloseRequest(e -> {
             e.consume();
             ctrl.exit();
         });
 
         Scene scene = new Scene(root);
-        stage.setScene(scene);
-        //stage.setResizable(false);
-        stage.show();
+        primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
+        primaryStage.show();
+        primaryStage.setTitle("Black Jack");
     }
 }

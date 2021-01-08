@@ -1,6 +1,5 @@
 package at.ac.fhcampuswien.Objects;
 
-
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 

@@ -1,7 +1,5 @@
 package at.ac.fhcampuswien.Objects;
 
-
-
 public class Player extends Person{
 
     private double balance;

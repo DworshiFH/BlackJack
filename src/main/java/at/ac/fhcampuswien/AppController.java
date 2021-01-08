@@ -82,16 +82,16 @@ public class AppController {
         //clears PlayingField
         playerPane.getChildren().clear();
         dealerPane.getChildren().clear();
-
         player.clearHoldingCards();
         dealer.clearHoldingCards();
-
         terminal.clear();
 
         showBalance.setText("Your Balance: "+ player.getBalance());
 
+        //reset splitPlayer to null
         splitPlayer=null;
 
+        //initialize all boolean variables
         isBlackJackPlayer =false;
         push=false;
         talonFound=false;
@@ -107,6 +107,7 @@ public class AppController {
         rightHandAlreadyDone =false;
         isBlackJackDealer=false;
 
+        //initialize Buttons
         hitButton.setVisible(true);
         surrenderButton.setVisible(true);
         doubleDownButton.setVisible(true);
@@ -156,13 +157,13 @@ public class AppController {
         GameMethods.GiveCardToDealer(dealer,deck);
         GenerateCardDealer();
 
-        //checks for Blackjack
+        //checks for Player Blackjack
         if(player.getCard(0).getValue()==11 && player.getCard(1).getValue()==10){
             isBlackJackPlayer =true;
         }else if(player.getCard(1).getValue()==11 && player.getCard(0).getValue()==10) {
             isBlackJackPlayer =true;
         }
-        //checks for dealer Blackjack
+        //checks for Dealer Blackjack
         if(dealer.getCard(0).getValue()==10 && dealer.getCard(1).getValue()==11){
             isBlackJackDealer=true;
         }else if(dealer.getCard(1).getValue()==10 && dealer.getCard(0).getValue()==11) {
@@ -274,7 +275,6 @@ public class AppController {
         playerValueWindow.setText("Card Value: " + PlayerCardValue);
     }
 
-    //boolean isFistSplitCard=true;
     private void GenerateCardSplit() throws FileNotFoundException {
         talonFound=GameMethods.TalonFound();
         if(talonFound){
@@ -307,6 +307,7 @@ public class AppController {
         dealerPane.getChildren().add(talonImageView);
     }
 
+    //after Player stands, the dealer will draw
     private void DealerDraws() throws FileNotFoundException {
         showFullDealerValue =true;
         terminal.clear();
@@ -322,6 +323,8 @@ public class AppController {
                 ShowDealerValue();
             }
         }
+
+        //is dealer Bust?
         if(GameMethods.BustCalculator(dealer)){
             terminal.setText("Dealer Bust.");
         }
@@ -360,7 +363,6 @@ public class AppController {
             }
         }
 
-
         //for Split
         if(!rightHandAlreadyDone){
             win=GameMethods.Win(splitPlayer,dealer);
@@ -369,17 +371,13 @@ public class AppController {
             if(win){
                 terminal.appendText("\nRight Hand Won!");
                 player.addBalance(splitPlayer.getStake()*2);
-                //setBetButton.setDisable(true);
                 newRoundButton.setVisible(true);
             }else if(push){
                 terminal.appendText("\nRight Hand Push!");
                 player.addBalance(splitPlayer.getBalance());
-                //setBetButton.setDisable(true);
                 newRoundButton.setVisible(true);
             }else if(lost){
                 terminal.appendText("\nRight Hand Lost!");
-                //setBetButton.setDisable(true);
-
                 newRoundButton.setVisible(true);
             }
         }
@@ -490,6 +488,7 @@ public class AppController {
         surrenderButton.setVisible(false);
     }
 
+    //switches buttons for left and right Hand
     public void HandSelector(){
         leftHandSelected = !leftHandSelected;
         rightHandSelected = !rightHandSelected;
