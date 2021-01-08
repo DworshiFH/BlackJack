@@ -130,6 +130,7 @@ public class AppController {
 
     private static final int minBet =10;
     public void placeBet() throws FileNotFoundException {
+        newRoundButton.setDisable(true);
 
         int amount;
         do{
@@ -162,9 +163,9 @@ public class AppController {
             isBlackJackPlayer =true;
         }
         //checks for dealer Blackjack
-        if(dealer.getHoldingCards().get(0).getValue()==10 && dealer.getHoldingCards().get(1).getValue()==11){
+        if(dealer.getCard(0).getValue()==10 && dealer.getCard(1).getValue()==11){
             isBlackJackDealer=true;
-        }else if(dealer.getHoldingCards().get(1).getValue()==10 && dealer.getHoldingCards().get(0).getValue()==11) {
+        }else if(dealer.getCard(1).getValue()==10 && dealer.getCard(0).getValue()==11) {
             isBlackJackDealer=true;
         }
 
@@ -231,25 +232,25 @@ public class AppController {
         }
         int DcardValue=GameMethods.CardsValueCalculator(dealer);
 
-        dealerPane.getChildren().add(dealer.getHoldingCards().get(dealer.getHoldingCards().size()-1).getImageView());
+        dealerPane.getChildren().add(dealer.getCard(dealer.getHoldingCards().size()-1).getImageView());
 
         if(showFullDealerValue){
             dealerValueWindow.setText("Card Value: " + DcardValue);
         }else{
-            dealerValueWindow.setText("Card Value: " + dealer.getHoldingCards().get(0).getValue());
+            dealerValueWindow.setText("Card Value: " + dealer.getCard(0).getValue());
         }
 
         if(dealer.getHoldingCards().size()==3){
             String path=System.getProperty("user.dir")+"/src/main/java/at/ac/fhcampuswien/textures/cards/"+dealer.getHoldingCards().get(1).getID()+".jpg";
             Image image = new Image(new FileInputStream(path));
-            dealer.getHoldingCards().get(1).setImage(image);
+            dealer.getCard(1).setImage(image);
         }
     }
 
     private void MakeDealerCardsVisible() throws FileNotFoundException {
         String path=System.getProperty("user.dir")+"/src/main/java/at/ac/fhcampuswien/textures/cards/"+dealer.getHoldingCards().get(1).getID()+".jpg";
         Image image = new Image(new FileInputStream(path));
-        dealer.getHoldingCards().get(1).setImage(image);
+        dealer.getCard(1).setImage(image);
     }
 
     private void GenerateCardPlayer() throws FileNotFoundException {
@@ -262,7 +263,7 @@ public class AppController {
 
         int PlayerCardValue=GameMethods.CardsValueCalculator(player);
 
-        ImageView show=player.getHoldingCards().get(player.getHoldingCards().size()-1).getImageView();
+        ImageView show=player.getCard(player.getHoldingCards().size()-1).getImageView();
 
         if(splitActive){
             show.setLayoutX(show.getLayoutX()-(player.getHoldingCards().size()-1)*60);
@@ -283,7 +284,7 @@ public class AppController {
         }
         int SplitCardValue=GameMethods.CardsValueCalculator(splitPlayer);
 
-        ImageView show = splitPlayer.getHoldingCards().get(splitPlayer.getHoldingCards().size()-1).getImageView();
+        ImageView show = splitPlayer.getCard(splitPlayer.getHoldingCards().size()-1).getImageView();
 
         show.setLayoutX(500+55*(splitPlayer.getHoldingCards().size()-2)); //560
 
@@ -549,9 +550,9 @@ public class AppController {
         surrenderButtonSplit.setDisable(false);
         handSelectButton.setDisable(false);
 
-        player.getCard(1).setImageViewX(50+offset+290);
+        player.getCard(1).setImageViewX(50+110+290);
 
-        splitPlayer=GameMethods.Split(player, deck);
+        splitPlayer=GameMethods.Split(player);
         showBalance.setText("Your Balance: "+player.getBalance());
         terminal.appendText("\nSplit Bet: "+splitPlayer.getStake());
 
@@ -629,7 +630,7 @@ public class AppController {
         GameMethods.DoubleDown(player, deck);
         GenerateCardPlayer();
         //rotates the card by 90°
-        player.getHoldingCards().get(player.getHoldingCards().size() - 1).getImageView().setRotate(90);
+        player.getCard(player.getHoldingCards().size() - 1).getImageView().setRotate(90);
         lost = GameMethods.Lost(player, dealer);
         showBalance.setText("Your Balance: " + player.getBalance());
 
@@ -654,7 +655,7 @@ public class AppController {
         GameMethods.DoubleDown(splitPlayer, deck);
         GenerateCardSplit();
         //rotates the card by 90°
-        splitPlayer.getHoldingCards().get(splitPlayer.getHoldingCards().size() - 1).getImageView().setRotate(90);
+        splitPlayer.getCard(splitPlayer.getHoldingCards().size() - 1).getImageView().setRotate(90);
         lost = GameMethods.Lost(splitPlayer, dealer);
         showBalance.setText("Your Balance: " + player.getBalance());
 
@@ -709,31 +710,6 @@ public class AppController {
     private void ShowDealerValue(){
         int DcardValue=GameMethods.CardsValueCalculator(dealer);
         dealerValueWindow.setText("Card Value: "+ DcardValue);
-    }
-
-    private final static int offset = 110;
-    public static ImageView CardTextureAssigner(Card card, int cardnum, boolean isDealer) { //true = Dealer
-        ImageView imageView = new ImageView();
-        try{
-            String path;
-
-            if(cardnum==1 && isDealer){
-                path=System.getProperty("user.dir")+"/src/main/java/at/ac/fhcampuswien/textures/cards/Red_back.jpg";
-            }else{
-                path=System.getProperty("user.dir")+"/src/main/java/at/ac/fhcampuswien/textures/cards/"+card.getID()+".jpg";
-            }
-            Image image = new Image(new FileInputStream(path));
-            imageView.setId(card.getID());
-            imageView.setImage(image);
-            imageView.setFitHeight(153);
-            imageView.setFitWidth(100);
-            imageView.setLayoutX(50+offset*cardnum);
-            imageView.setLayoutY(50);
-        }catch (FileNotFoundException e){
-            e.printStackTrace();
-            //use Logger for future builds
-        }
-        return imageView;
     }
 
     public void exit(){

@@ -1,7 +1,11 @@
 package at.ac.fhcampuswien;
 
 import at.ac.fhcampuswien.Objects.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 public class GameMethods {
@@ -22,7 +26,7 @@ public class GameMethods {
         }
 
         Card addCard=new Card(card);
-        addCard.setImageView(AppController.CardTextureAssigner(addCard, player.getHoldingCards().size(),false));
+        addCard.setImageView(CardTextureAssigner(addCard, player.getHoldingCards().size(),false));
         player.addCard(addCard); //make new Card object, to be able to change card values, without affecting the whole deck.
         deck.remove(0);
     }
@@ -35,7 +39,7 @@ public class GameMethods {
             card=deck.get(0);
         }
         Card addCard=new Card(card);
-        addCard.setImageView(AppController.CardTextureAssigner(addCard, dealer.getHoldingCards().size(),true));
+        addCard.setImageView(CardTextureAssigner(addCard, dealer.getHoldingCards().size(),true));
         dealer.addCard(addCard);
         deck.remove(0);
     }
@@ -45,7 +49,7 @@ public class GameMethods {
         player.removeBalance(amount);
     }
 
-    public static Player Split(Player player, List<Card> deck) {
+    public static Player Split(Player player) {
 
         Player ret = new Player("playerSplit", player.getStake());
         ret.setStake(player.getStake());
@@ -140,17 +144,42 @@ public class GameMethods {
         }
         if(PcardValue>21){
             for(int i=0; i<person.getHoldingCards().size();i++){ //checks for Ace
-                if(person.getHoldingCards().get(i).getValue()==11){
-                    person.getHoldingCards().get(i).setValue(1);
+                if(person.getCard(i).getValue()==11){
+                    person.getCard(i).setValue(1);
                     break;
                 }
             }
             PcardValue=0;
             for(int j=0; j<person.getHoldingCards().size();j++){
-                PcardValue+=person.getHoldingCards().get(j).getValue();
+                PcardValue+=person.getCard(j).getValue();
             }
         }
 
         return PcardValue;
+    }
+
+    private final static int offset = 110;
+    public static ImageView CardTextureAssigner(Card card, int cardnum, boolean isDealer) { //true = Dealer
+        ImageView imageView = new ImageView();
+        try{
+            String path;
+
+            if(cardnum==1 && isDealer){
+                path=System.getProperty("user.dir")+"/src/main/java/at/ac/fhcampuswien/textures/cards/Red_back.jpg";
+            }else{
+                path=System.getProperty("user.dir")+"/src/main/java/at/ac/fhcampuswien/textures/cards/"+card.getID()+".jpg";
+            }
+            Image image = new Image(new FileInputStream(path));
+            imageView.setId(card.getID());
+            imageView.setImage(image);
+            imageView.setFitHeight(153);
+            imageView.setFitWidth(100);
+            imageView.setLayoutX(50+offset*cardnum);
+            imageView.setLayoutY(50);
+        }catch (FileNotFoundException e){
+            e.printStackTrace();
+            //use Logger for future builds
+        }
+        return imageView;
     }
 }
