@@ -72,6 +72,7 @@ public class AppController {
     }
 
     public void newRound() {
+        newRoundButton.setVisible(false);
 
         if(talonFound){
             deck=Deck.makeDeck();
@@ -131,7 +132,6 @@ public class AppController {
 
     private static final int minBet =10;
     public void placeBet() throws FileNotFoundException {
-        newRoundButton.setDisable(true);
 
         int amount;
         do{
@@ -693,6 +693,7 @@ public class AppController {
         }
         leftHandAlreadyDone =true;
         if(rightHandAlreadyDone) newRoundButton.setVisible(true);
+        newRoundButton.setVisible(true);
     }
 
     public void SplitSurrender() {
