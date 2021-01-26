@@ -134,95 +134,101 @@ public class AppController {
     public void placeBet() throws FileNotFoundException {
 
         int amount;
-        do{
-            amount = Integer.parseInt(stakesFiled.getText());
-            if(amount<minBet){
-                terminal.setText("Minimal bet is: "+ minBet);
-                placeBet();
-            }
-        }while(amount<minBet);
+        amount = Integer.parseInt(stakesFiled.getText());
+        if(amount<minBet){
+            terminal.setText("Minimal bet is: "+ minBet);
+        }else if (amount > player.getBalance()){
+            terminal.setText("Insufficient Funds");
+        }else{
+            GameMethods.SetBet(player, amount);
 
-        GameMethods.SetBet(player, amount);
-
-        terminal.clear();
-        terminal.setText("Your Bet: "+ player.getStake());
-
-        GameMethods.GiveCardToPlayer(player,deck);
-        GenerateCardPlayer();
-        GameMethods.GiveCardToPlayer(player,deck);
-        GenerateCardPlayer();
-
-        GameMethods.GiveCardToDealer(dealer,deck);
-        GenerateCardDealer();
-        GameMethods.GiveCardToDealer(dealer,deck);
-        GenerateCardDealer();
-
-        //checks for Player Blackjack
-        if(player.getCard(0).getValue()==11 && player.getCard(1).getValue()==10){
-            isBlackJackPlayer =true;
-        }else if(player.getCard(1).getValue()==11 && player.getCard(0).getValue()==10) {
-            isBlackJackPlayer =true;
-        }
-        //checks for Dealer Blackjack
-        if(dealer.getCard(0).getValue()==10 && dealer.getCard(1).getValue()==11){
-            isBlackJackDealer=true;
-        }else if(dealer.getCard(1).getValue()==10 && dealer.getCard(0).getValue()==11) {
-            isBlackJackDealer=true;
-        }
-
-        if(isBlackJackDealer && !isBlackJackPlayer){
-            ShowDealerValue();
-            MakeDealerCardsVisible();
-            DisableButtons();
-            newRoundButton.setVisible(true);
-            terminal.setText("Dealer has Blackjack!\nLost!");
-            splitButton.setDisable(true);
-            GameMethods.LostPayout(player);
-        }
-
-        if(isBlackJackPlayer && isBlackJackDealer){
-            ShowDealerValue();
-            MakeDealerCardsVisible();
-            DisableButtons();
-            newRoundButton.setVisible(true);
-            terminal.setText("Player and dealer have Blackjack!\nPush!");
-            GameMethods.PushPayout(player);
-        }
-
-        if(isBlackJackPlayer && !isBlackJackDealer){
-            DisableButtons();
-            ShowDealerValue();
-            GameMethods.BlackJackPayout(player);
             terminal.clear();
-            terminal.setText("Blackjack!");
-            setBetButton.setDisable(true);
-            MakeDealerCardsVisible();
-            newRoundButton.setVisible(true);
-        }
+            terminal.setText("Your Bet: "+ player.getStake());
 
-        if(!isBlackJackPlayer && !isBlackJackDealer){
-            //enables all Buttons, except Split Button
-            splitButton.setDisable(true);
-            hitButton.setDisable(false);
-            standButton.setDisable(false);
-            doubleDownButton.setDisable(false);
-            surrenderButton.setDisable(false);
+            GameMethods.GiveCardToPlayer(player,deck);
+            GenerateCardPlayer();
+            GameMethods.GiveCardToPlayer(player,deck);
+            GenerateCardPlayer();
 
-        }
+            GameMethods.GiveCardToDealer(dealer,deck);
+            GenerateCardDealer();
+            GameMethods.GiveCardToDealer(dealer,deck);
+            GenerateCardDealer();
 
-        //Checks for possibility Split (Split is only possible if both cards are of same value)
-        if(player.getCard(0).getValue() == player.getCard(1).getValue() && !isBlackJackDealer){
-            splitButton.setDisable(false);
-        }
-        if(player.getCard(0).getIsAce() && !isBlackJackDealer){
-            if(player.getCard(1).getIsAce()){
+            //checks for Player Blackjack
+            if(player.getCard(0).getValue()==11 && player.getCard(1).getValue()==10){
+                isBlackJackPlayer =true;
+            }else if(player.getCard(1).getValue()==11 && player.getCard(0).getValue()==10) {
+                isBlackJackPlayer =true;
+            }
+            //checks for Dealer Blackjack
+            if(dealer.getCard(0).getValue()==10 && dealer.getCard(1).getValue()==11){
+                isBlackJackDealer=true;
+            }else if(dealer.getCard(1).getValue()==10 && dealer.getCard(0).getValue()==11) {
+                isBlackJackDealer=true;
+            }
+
+            if(isBlackJackDealer && !isBlackJackPlayer){
+                ShowDealerValue();
+                MakeDealerCardsVisible();
+                DisableButtons();
+                newRoundButton.setVisible(true);
+                terminal.setText("Dealer has Blackjack!\nLost!");
+                splitButton.setDisable(true);
+                GameMethods.LostPayout(player);
+            }
+
+            if(isBlackJackPlayer && isBlackJackDealer){
+                ShowDealerValue();
+                MakeDealerCardsVisible();
+                DisableButtons();
+                newRoundButton.setVisible(true);
+                terminal.setText("Player and dealer have Blackjack!\nPush!");
+                GameMethods.PushPayout(player);
+            }
+
+            if(isBlackJackPlayer && !isBlackJackDealer){
+                DisableButtons();
+                ShowDealerValue();
+                GameMethods.BlackJackPayout(player);
+                terminal.clear();
+                terminal.setText("Blackjack!");
+                setBetButton.setDisable(true);
+                MakeDealerCardsVisible();
+                newRoundButton.setVisible(true);
+            }
+
+            if(!isBlackJackPlayer && !isBlackJackDealer){
+                //enables all Buttons, except Split Button
+                splitButton.setDisable(true);
+                hitButton.setDisable(false);
+                standButton.setDisable(false);
+                doubleDownButton.setDisable(false);
+                surrenderButton.setDisable(false);
+
+            }
+
+            //Checks for possibility Split (Split is only possible if both cards are of same value)
+            if(player.getCard(0).getValue() == player.getCard(1).getValue() && !isBlackJackDealer){
                 splitButton.setDisable(false);
             }
-        }
+            if(player.getCard(0).getIsAce() && !isBlackJackDealer){
+                if(player.getCard(1).getIsAce()){
+                    splitButton.setDisable(false);
+                }
+            }
 
-        setBetButton.setDisable(true);
-        showBalance.setText("Your Balance: "+ player.getBalance());
+            setBetButton.setDisable(true);
+            showBalance.setText("Your Balance: "+ player.getBalance());
+
+            if(amount > player.getBalance()){
+                splitButton.setDisable(true);
+                doubleDownButton.setDisable(true);
+            }
+        }
     }
+
+
 
     private void GenerateCardDealer() throws FileNotFoundException {
         talonFound=GameMethods.TalonFound();
