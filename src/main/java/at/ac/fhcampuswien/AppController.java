@@ -228,8 +228,6 @@ public class AppController {
         }
     }
 
-
-
     private void GenerateCardDealer() throws FileNotFoundException {
         talonFound=GameMethods.TalonFound();
         if(talonFound){
