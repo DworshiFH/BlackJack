@@ -41,7 +41,7 @@ public class Card {
     }
 
     public void setImageView(ImageView imageView) {
-        //source: https://account.jetbrains.com/github/oauth/intellij/complete
+        //source: https://stackoverflow.com/questions/20489908/border-radius-and-shadow-on-imageview
         // set a clip to apply rounded border to the original image.
         Rectangle clip = new Rectangle(
                 imageView.getFitWidth(), imageView.getFitHeight()
@@ -90,7 +90,7 @@ public class Card {
     public void setImage(Image image) {
         this.imageView.setImage(image);
 
-        //source: https://account.jetbrains.com/github/oauth/intellij/complete
+        //source: https://stackoverflow.com/questions/20489908/border-radius-and-shadow-on-imageview
         // set a clip to apply rounded border to the original image.
         Rectangle clip = new Rectangle(
                 this.imageView.getFitWidth(), imageView.getFitHeight()
